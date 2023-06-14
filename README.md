@@ -12,7 +12,7 @@ Allows for creating your own personalised modded experience as well as QOL chang
 5: Open Pcsx2 and load your Duelist of the roses game.\
 6: Use Boot ISO (full).\
 7: Wait until the memory patcher closes.\
-8: Enjoy the game with your mods.\
+8: Enjoy the game with your mods.
 
 To use the all Custom duels simply go to custom duels and toggle between people with L1 and R1.
 
