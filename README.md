@@ -4,7 +4,7 @@
 A simple and easy to use memory patcher for the use of mods.\
 Allows for creating your own personalised modded experience as well as QOL changes.
 ## To use:
-0: Go to [Releases](https://github.com/batzpup/DOTR-Memory-Patcher/releases) and download DOTRModder.zip.\
+0: Go to [Releases](https://github.com/batzpup/DOTR-Memory-Patcher/releases) and download the most recent version of DOTRModder.zip.\
 1: Extract it to a folder wherever you would like.\
 2: Run DOTRModder.exe.\
 3: Select the mods you wish to patch into your game and what values they should have.\
