@@ -25,5 +25,5 @@ Allow non monster fusions will work but you will currently need to patch the iso
 ## Thanks:
 A Huge thanks to GMS/Generic Mad Scientist for a lot of the base reverse engineering work and documentation as well as helping me personally.\
 To [Clovis](https://www.youtube.com/@ClovissenpaiDotR) and his discord community for supporting and encouraging me as well as provided tips and feedback.\
-To Blayr for his hard work on his modding tool.\
+To Blayr for his hard work on his modding tool as it is what inspired this one.\
 To Tueye for all the MANIA!!!
