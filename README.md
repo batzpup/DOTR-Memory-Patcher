@@ -4,13 +4,15 @@
 A simple and easy to use memory patcher for the use of mods.\
 Allows for creating your own personalised modded experience as well as QOL changes.
 ## To use:
-1: Run DOTRModder.exe.\
-2: Select the mods you wish to patch into your game and what values they should have.\
-3: Press start.\
-4: Open Pcsx2 and load your Duelist of the roses game.\
-5: Use Boot ISO (full).\
-6: Wait until the memory patcher closes.\
-7: Enjoy the game with your mods.
+0: Go to [Releases](https://github.com/batzpup/DOTR-Memory-Patcher/releases) and download DOTRModder.zip.\
+1: Extract it to a folder wherever you would like.\
+2: Run DOTRModder.exe.\
+3: Select the mods you wish to patch into your game and what values they should have.\
+4: Press start.\
+5: Open Pcsx2 and load your Duelist of the roses game.\
+6: Use Boot ISO (full).\
+7: Wait until the memory patcher closes.\
+8: Enjoy the game with your mods.
 
 
 ## Notes:
