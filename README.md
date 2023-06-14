@@ -2,7 +2,7 @@
  A memory patcher for the NTSC-U Version of Yu-gi-oh Yu-Gi-Oh! The Duelists of the Roses mods.  
 
 A simple and easy to use memory patcher for the use of mods.\
-Allows for creating your own personalised modded experience as well as QOL changes.\
+Allows for creating your own personalised modded experience as well as QOL changes.
 ## To use:
 1: Run DOTRModder.exe.\
 2: Select the mods you wish to patch into your game and what values they should have.\
