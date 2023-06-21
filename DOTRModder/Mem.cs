@@ -1,7 +1,8 @@
 ﻿
 using System;
-using System.Diagnostics;
+
 using System.Reflection.Metadata;
+using System.Diagnostics;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -163,6 +164,9 @@ namespace DOTRModder
         static extern uint SuspendThread(IntPtr hThread);
         [DllImport("kernel32.dll")]
         static extern int ResumeThread(IntPtr hThread);
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        public static extern bool AllocConsole();
         public static void NopMips(IntPtr dstAddr, uint NumberOfInstructions,IntPtr hproc)
         {
             
