@@ -117,4 +117,35 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="CRUSH" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CRUSH.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DARK" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DARK.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FOREST" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\FOREST.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LABYRINTH" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LABYRINTH.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MEADOW" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MEADOW.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MOUNTAIN" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MOUNTAIN.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NORMAL" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\NORMAL.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SEA" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SEA.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TOON" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TOON.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WASTELAND" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WASTELAND.PNG;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

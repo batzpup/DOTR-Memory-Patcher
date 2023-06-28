@@ -1,11 +1,16 @@
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Net.Http.Json;
+using System.Reflection;
+using System.Security.Policy;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Windows.Forms;
 using static DOTRModder.Form1;
+using static System.Windows.Forms.DataFormats;
 
 
 namespace DOTRModder
@@ -43,20 +48,24 @@ namespace DOTRModder
             public bool LpCapCheck;
             public bool ReincarnationCheck;
             public bool TerrainCheck;
-
-
             public int SideFirstValue;
             public int ForceSideStartValue;
             public int LpCapValue;
             public int ReincarnationValue;
             public int TerrainValue;
-
             public int[] SlotThreeInARow;
             public int[] SlotRewards;
-
             public string LastSaveFilePath;
-
+            public DotrMap map;
         }
+        public DotrMap[] maps = new DotrMap[46];
+        DotrMap currentMap = new DotrMap();
+        byte[] EditMapFileIso;
+        public string editMapISOPath = string.Empty;
+        Terrain selectedTile = Terrain.NORMAL;
+        private bool isClickAndDrag = false;
+
+
 
         public Form1()
         {
@@ -66,9 +75,26 @@ namespace DOTRModder
             updateMainlabel = new updateMainLabelDelegate(updateCurrentStatus);
             stopSelectionChanges = new StopSelectionChanges(LockAllSelection);
             CurrentStatus.Text = "Press Start When Ready";
+            scEditMapMain.IsSplitterFixed = true;
+            scEditMapTiles.IsSplitterFixed = true;
+            scEditMapToSelect.IsSplitterFixed= true;
+            RefreshEditor.Interval = 1000 / 60;
+            RefreshEditor.Enabled = true;
+            SetDoubleBuffered(scEditMapMain);
+            SetDoubleBuffered(scEditMapMain.Panel2);
+            UpdateStyles();
+            LoadDefaultMaps();
+
+
 
         }
-
+        public void SetTabsEnabled(bool enabled)
+        {
+            foreach (TabPage tabPage in tcMaster.TabPages)
+            {
+                tabPage.Enabled = enabled;
+            }
+        }
         public void LoadData()
         {
             this.ActiveControl = null;
@@ -224,10 +250,12 @@ namespace DOTRModder
 
         void LockAllSelection()
         {
+
             foreach (Control c in this.Controls)
             {
                 c.Enabled = false;
             }
+            SetTabsEnabled(false);
 
         }
         void updateCurrentStatus(string str)
@@ -241,6 +269,7 @@ namespace DOTRModder
 
         private void btn_Start_Click(object sender, EventArgs e)
         {
+            stopSelectionChanges();
             CurrentStatus.Text = "Current Status:\nWaiting For Pcsx2";
 
             btn_Start.Enabled = false;
@@ -257,6 +286,7 @@ namespace DOTRModder
 
             Thread thread = new Thread(delegate ()
             {
+
                 Main.Init(process, this);
             });
             thread.IsBackground = true;
@@ -266,7 +296,12 @@ namespace DOTRModder
         }
 
 
+        private void cbCustomMaps_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox box = sender as CheckBox;
+            UpdateSimpleBoolCheckbox.Invoke(SimpleModBools.UseCustomMaps, box.Checked);
 
+        }
         private void cb_AIPassFix_CheckedChanged(object sender, EventArgs e)
         {
             CheckBox box = sender as CheckBox;
@@ -450,6 +485,7 @@ namespace DOTRModder
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             SaveData(false);
+            Environment.Exit(Environment.ExitCode);
         }
 
         private void btn_DefaultSettings_Click(object sender, EventArgs e)
@@ -504,6 +540,296 @@ namespace DOTRModder
         {
             CheckBox box = sender as CheckBox;
             UpdateSimpleBoolCheckbox.Invoke(SimpleModBools.FastIntro, box.Checked);
+        }
+
+
+
+        private void splitContainer1_Panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void scEditMapMain_Panel2_Paint(object sender, PaintEventArgs e)
+        {
+            currentMap.Draw(e.Graphics, 8, 100);
+        }
+
+        public void SetDoubleBuffered(Control c)
+        {
+            PropertyInfo pi = typeof(Control).GetProperty("DoubleBuffered",
+                BindingFlags.NonPublic | BindingFlags.Instance);
+            pi.SetValue(c, true, null);
+        }
+
+
+
+
+        private void RefreshEditor_Tick(object sender, EventArgs e)
+        {
+            scEditMapMain.Panel2.Invalidate();
+        }
+
+
+
+        private void pbForest_Click(object sender, EventArgs e)
+        {
+            PictureBox_Click(sender, e);
+        }
+
+        private void pbWasteland_Click(object sender, EventArgs e)
+        {
+            PictureBox_Click(sender, e);
+        }
+
+        private void pbMountain_Click(object sender, EventArgs e)
+        {
+            PictureBox_Click(sender, e);
+        }
+
+        private void pbMeadow_Click(object sender, EventArgs e)
+        {
+            PictureBox_Click(sender, e);
+        }
+
+        private void pbSea_Click(object sender, EventArgs e)
+        {
+            PictureBox_Click(sender, e);
+        }
+
+        private void pbYami_Click(object sender, EventArgs e)
+        {
+            PictureBox_Click(sender, e);
+        }
+
+        private void pbToon_Click(object sender, EventArgs e)
+        {
+            PictureBox_Click(sender, e);
+        }
+
+        private void pbNormal_Click(object sender, EventArgs e)
+        {
+            PictureBox_Click(sender, e);
+        }
+
+        private void pbLab_Click(object sender, EventArgs e)
+        {
+            PictureBox_Click(sender, e);
+        }
+
+        private void pbCrush_Click(object sender, EventArgs e)
+        {
+            PictureBox_Click(sender, e);
+        }
+        private void PictureBox_Click(object sender, EventArgs e)
+        {
+            PictureBox clickedPictureBox = (PictureBox)sender;
+            TableLayoutPanelCellPosition cellPosition = tbPallete.GetCellPosition(clickedPictureBox);
+            int column = cellPosition.Column;
+            int row = cellPosition.Row;
+            int value = row * tbPallete.ColumnCount + column;
+            // Do something with the column and row values, such as displaying them
+            ChangeSelectedTile((Terrain)value);
+        }
+
+        void ChangeSelectedTile(Terrain terrain)
+        {
+            selectedTile = terrain;
+            pbSelectedTile.Image = MapTile.GetImageFromTerrain(terrain);
+        }
+
+        private void scEditMapMain_Panel2_MouseDown(object sender, MouseEventArgs e)
+        {
+
+            // Determine the clicked tile based on the mouse position
+            for (int i = 0; i < currentMap.tiles.Length; i++)
+            {
+                MapTile tile = currentMap.tiles[i];
+                if (tile.GetRect().Contains(e.Location))
+                {
+                    isClickAndDrag = true;
+                    break;
+                }
+            }
+        }
+
+
+        private void scEditMapMain_Panel2_MouseUp(object sender, MouseEventArgs e)
+        {
+            isClickAndDrag = false;
+        }
+
+        private void scEditMapMain_Panel2_MouseMove(object sender, MouseEventArgs e)
+        {
+
+            for (int i = 0; i < currentMap.tiles.Length; i++)
+            {
+                if (currentMap.GetTile(i).GetRect().Contains(e.Location))
+                {
+                    currentMap.SetTileHovered(i, true);
+                }
+                else
+                {
+                    currentMap.SetTileHovered(i, false);
+                }
+            }
+            if (e.Button == MouseButtons.Left)
+            {
+                if (isClickAndDrag)
+                {
+                    // Update the image of the tiles as the mouse moves over them
+                    for (int i = 0; i < currentMap.tiles.Length; i++)
+                    {
+                        MapTile tile = currentMap.tiles[i];
+                        if (tile.GetRect().Contains(e.Location))
+                        {
+
+                            currentMap.SetTile(i, selectedTile);
+                        }
+                    }
+                }
+            }
+            if (e.Button == MouseButtons.Right)
+            {
+                if (isClickAndDrag)
+                {
+                    // Update the image of the tiles as the mouse moves over them
+                    for (int i = 0; i < currentMap.tiles.Length; i++)
+                    {
+                        MapTile tile = currentMap.tiles[i];
+                        if (tile.GetRect().Contains(e.Location))
+                        {
+
+                            currentMap.SetTile(i, Terrain.NORMAL);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            currentMap = maps[lbMapSelection.SelectedIndex];
+            if (lbMapSelection.SelectedIndex != -1) // Check if an item is selected
+            {
+                string? selectedText = lbMapSelection.Items[lbMapSelection.SelectedIndex].ToString();
+                lblMapName.Text = $"Current Map: {selectedText}";
+            }
+
+
+
+        }
+        private void LoadDefaultMaps()
+        {
+            for (int i = 0; i < maps.Length; i++)
+            {
+                maps[i] = new DotrMap(VanillaMapBytes.Maps[i]);
+            }
+            currentMap = maps[0];
+            lbMapSelection.SelectedIndex = 0;
+        }
+
+        private void LoadMapsFromIso()
+        {
+            for (int i = 0; i < maps.Length; i++)
+            {
+                int mapOffset = 0x29EF5C;
+                mapOffset += i * 0x31;
+                byte[] slusMap = new byte[49];
+                for (int j = 0; j < slusMap.Length; j++)
+                {
+
+                    slusMap[j] = EditMapFileIso[mapOffset + j];
+                }
+
+                maps[i] = new DotrMap(slusMap);
+            }
+            currentMap = maps[0];
+        }
+
+        private void btnMapLoadISo_Click(object sender, EventArgs e)
+        {
+
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "ISO files (*.iso)|*.iso";
+                ofd.FilterIndex = 2;
+                ofd.RestoreDirectory = true;
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        editMapISOPath = ofd.FileName;
+                        MessageBox.Show(ofd.SafeFileName);
+                        EditMapFileIso = OpenIso(editMapISOPath, EditMapFileIso);
+                        lblMapCurrentISOResult.Text = $"{ofd.SafeFileName}";
+                        lbMapSelection.SelectedIndex = 0;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("ISO could not be loaded. " + ex.ToString(), "Error", MessageBoxButtons.OK);
+                    }
+                }
+            }
+            LoadMapsFromIso();
+        }
+        private byte[] OpenIso(String path, byte[] memoryIso)
+        {
+
+            using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
+            {
+                memoryIso = new byte[fs.Length];
+                int bytesToRead = (int)fs.Length;
+                int bytesRead = 0;
+                while (bytesToRead > 0)
+                {
+                    int b = fs.Read(memoryIso, bytesRead, bytesToRead);
+                    if (b == 0)
+                    {
+                        break;
+                    }
+
+                    bytesRead += b;
+                    bytesToRead -= b;
+                }
+            }
+
+            return memoryIso;
+        }
+
+        private void btnSaveMapsToISO(object sender, EventArgs e)
+        {
+            if (EditMapFileIso != null)
+            {
+
+
+                for (int i = 0; i < maps.Length; i++)
+                {
+                    int mapOffset = 0x29EF5C;
+                    mapOffset += i * 0x31;
+                    DotrMap? map = maps[i];
+                    for (int j = 0; j < map.tiles.Length; j++)
+                    {
+
+                        EditMapFileIso[mapOffset + j] = map.GetTile(j).GetTerrainAsByte();
+                    }
+                }
+                MessageBox.Show("Written to ISO", "Success", MessageBoxButtons.OK);
+                File.WriteAllBytes(editMapISOPath, EditMapFileIso);
+
+                MessageBox.Show("Written to ISO", "Success", MessageBoxButtons.OK);
+
+            }
+            else
+            {
+                MessageBox.Show("You need to load an ISO first", "Error", MessageBoxButtons.OK);
+            }
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("explorer.exe", "https://github.com/rjoken/DOTRMap");
         }
     }
 

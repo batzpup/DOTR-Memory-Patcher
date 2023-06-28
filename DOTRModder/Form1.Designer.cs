@@ -31,8 +31,11 @@ namespace DOTRModder
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             TabPage tbMain;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            cbCustomMaps = new CheckBox();
+            cb_fastIntro = new CheckBox();
             btn_DefaultSettings = new Button();
             num_LpCap = new NumericUpDown();
             cb_AdditionalSlotRewards = new CheckBox();
@@ -75,7 +78,35 @@ namespace DOTRModder
             number = new DataGridViewTextBoxColumn();
             threeInARow = new DataGridViewComboBoxColumn();
             Reward = new DataGridViewComboBoxColumn();
-            cb_fastIntro = new CheckBox();
+            tbEditMap = new TabPage();
+            scEditMapMain = new SplitContainer();
+            scEditMapToSelect = new SplitContainer();
+            lblMapToSelect = new Label();
+            lbMapSelection = new ListBox();
+            scEditMapTiles = new SplitContainer();
+            label3 = new Label();
+            LklblGithub = new LinkLabel();
+            lblMapCurrentISOResult = new Label();
+            lblMapCurrentlyLoadedISO = new Label();
+            btnSaveMap = new Button();
+            btnMapLoadISo = new Button();
+            pbSelectedTile = new PictureBox();
+            lblSelectedTile = new Label();
+            tbPallete = new TableLayoutPanel();
+            pbCrush = new PictureBox();
+            pbLab = new PictureBox();
+            pbNormal = new PictureBox();
+            pbToon = new PictureBox();
+            pbYami = new PictureBox();
+            pbSea = new PictureBox();
+            pbMountain = new PictureBox();
+            pbForest = new PictureBox();
+            pbMeadow = new PictureBox();
+            pbWasteland = new PictureBox();
+            lblMapSideWhite = new Label();
+            lblMapSideRed = new Label();
+            lblMapName = new Label();
+            RefreshEditor = new System.Windows.Forms.Timer(components);
             tbMain = new TabPage();
             tbMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)num_LpCap).BeginInit();
@@ -86,12 +117,38 @@ namespace DOTRModder
             tbFusions.SuspendLayout();
             tabSlotRewards.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)SlotRewardsDataGridView).BeginInit();
+            tbEditMap.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)scEditMapMain).BeginInit();
+            scEditMapMain.Panel1.SuspendLayout();
+            scEditMapMain.Panel2.SuspendLayout();
+            scEditMapMain.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)scEditMapToSelect).BeginInit();
+            scEditMapToSelect.Panel1.SuspendLayout();
+            scEditMapToSelect.Panel2.SuspendLayout();
+            scEditMapToSelect.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)scEditMapTiles).BeginInit();
+            scEditMapTiles.Panel1.SuspendLayout();
+            scEditMapTiles.Panel2.SuspendLayout();
+            scEditMapTiles.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pbSelectedTile).BeginInit();
+            tbPallete.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pbCrush).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pbLab).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pbNormal).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pbToon).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pbYami).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pbSea).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pbMountain).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pbForest).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pbMeadow).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pbWasteland).BeginInit();
             SuspendLayout();
             // 
             // tbMain
             // 
             tbMain.BackColor = Color.LightGray;
             tbMain.BackgroundImageLayout = ImageLayout.Stretch;
+            tbMain.Controls.Add(cbCustomMaps);
             tbMain.Controls.Add(cb_fastIntro);
             tbMain.Controls.Add(btn_DefaultSettings);
             tbMain.Controls.Add(num_LpCap);
@@ -124,6 +181,28 @@ namespace DOTRModder
             tbMain.Size = new Size(1008, 671);
             tbMain.TabIndex = 0;
             tbMain.Text = "Main";
+            // 
+            // cbCustomMaps
+            // 
+            cbCustomMaps.AutoSize = true;
+            cbCustomMaps.Location = new Point(31, 401);
+            cbCustomMaps.Name = "cbCustomMaps";
+            cbCustomMaps.Size = new Size(149, 24);
+            cbCustomMaps.TabIndex = 72;
+            cbCustomMaps.Text = "Use Custom Maps";
+            cbCustomMaps.UseVisualStyleBackColor = true;
+            cbCustomMaps.CheckedChanged += cbCustomMaps_CheckedChanged;
+            // 
+            // cb_fastIntro
+            // 
+            cb_fastIntro.AutoSize = true;
+            cb_fastIntro.Location = new Point(31, 157);
+            cb_fastIntro.Name = "cb_fastIntro";
+            cb_fastIntro.Size = new Size(202, 24);
+            cb_fastIntro.TabIndex = 71;
+            cb_fastIntro.Text = "Fast Intro (recommended)";
+            cb_fastIntro.UseVisualStyleBackColor = true;
+            cb_fastIntro.CheckedChanged += FastIntro_CheckedChanged;
             // 
             // btn_DefaultSettings
             // 
@@ -460,6 +539,7 @@ namespace DOTRModder
             tcMaster.Controls.Add(tbMain);
             tcMaster.Controls.Add(tbFusions);
             tcMaster.Controls.Add(tabSlotRewards);
+            tcMaster.Controls.Add(tbEditMap);
             tcMaster.Location = new Point(0, 29);
             tcMaster.Name = "tcMaster";
             tcMaster.SelectedIndex = 0;
@@ -565,16 +645,371 @@ namespace DOTRModder
             Reward.MinimumWidth = 20;
             Reward.Name = "Reward";
             // 
-            // cb_fastIntro
+            // tbEditMap
             // 
-            cb_fastIntro.AutoSize = true;
-            cb_fastIntro.Location = new Point(31, 157);
-            cb_fastIntro.Name = "cb_fastIntro";
-            cb_fastIntro.Size = new Size(202, 24);
-            cb_fastIntro.TabIndex = 71;
-            cb_fastIntro.Text = "Fast Intro (recommended)";
-            cb_fastIntro.UseVisualStyleBackColor = true;
-            cb_fastIntro.CheckedChanged += FastIntro_CheckedChanged;
+            tbEditMap.Controls.Add(scEditMapMain);
+            tbEditMap.Location = new Point(4, 32);
+            tbEditMap.Name = "tbEditMap";
+            tbEditMap.Padding = new Padding(3);
+            tbEditMap.Size = new Size(1008, 671);
+            tbEditMap.TabIndex = 3;
+            tbEditMap.Text = "Edit Map";
+            tbEditMap.UseVisualStyleBackColor = true;
+            // 
+            // scEditMapMain
+            // 
+            scEditMapMain.Dock = DockStyle.Fill;
+            scEditMapMain.Location = new Point(3, 3);
+            scEditMapMain.Name = "scEditMapMain";
+            // 
+            // scEditMapMain.Panel1
+            // 
+            scEditMapMain.Panel1.Controls.Add(scEditMapToSelect);
+            // 
+            // scEditMapMain.Panel2
+            // 
+            scEditMapMain.Panel2.BackColor = Color.LightGray;
+            scEditMapMain.Panel2.Controls.Add(lblMapSideWhite);
+            scEditMapMain.Panel2.Controls.Add(lblMapSideRed);
+            scEditMapMain.Panel2.Controls.Add(lblMapName);
+            scEditMapMain.Panel2.Paint += scEditMapMain_Panel2_Paint;
+            scEditMapMain.Panel2.MouseDown += scEditMapMain_Panel2_MouseDown;
+            scEditMapMain.Panel2.MouseMove += scEditMapMain_Panel2_MouseMove;
+            scEditMapMain.Panel2.MouseUp += scEditMapMain_Panel2_MouseUp;
+            scEditMapMain.Size = new Size(1002, 665);
+            scEditMapMain.SplitterDistance = 481;
+            scEditMapMain.TabIndex = 0;
+            // 
+            // scEditMapToSelect
+            // 
+            scEditMapToSelect.Dock = DockStyle.Fill;
+            scEditMapToSelect.Location = new Point(0, 0);
+            scEditMapToSelect.Name = "scEditMapToSelect";
+            // 
+            // scEditMapToSelect.Panel1
+            // 
+            scEditMapToSelect.Panel1.BackColor = Color.LightGray;
+            scEditMapToSelect.Panel1.Controls.Add(lblMapToSelect);
+            scEditMapToSelect.Panel1.Controls.Add(lbMapSelection);
+            // 
+            // scEditMapToSelect.Panel2
+            // 
+            scEditMapToSelect.Panel2.Controls.Add(scEditMapTiles);
+            scEditMapToSelect.Size = new Size(481, 665);
+            scEditMapToSelect.SplitterDistance = 159;
+            scEditMapToSelect.TabIndex = 0;
+            // 
+            // lblMapToSelect
+            // 
+            lblMapToSelect.AutoSize = true;
+            lblMapToSelect.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
+            lblMapToSelect.Location = new Point(15, 19);
+            lblMapToSelect.Name = "lblMapToSelect";
+            lblMapToSelect.Size = new Size(122, 25);
+            lblMapToSelect.TabIndex = 1;
+            lblMapToSelect.Text = "Map To Select";
+            lblMapToSelect.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lbMapSelection
+            // 
+            lbMapSelection.FormattingEnabled = true;
+            lbMapSelection.ItemHeight = 20;
+            lbMapSelection.Items.AddRange(new object[] { "Tutorial", "Seto", "Weevil", "Rex", "Keith", "Ishtar", "Necromancer", "Darkness-ruler", "Labyrinth-ruler", "Pegasus", "Richard", "Tea", "Tristan", "Mai", "Mako", "Joey", "Shadi", "Jasper", "Bakura", "Yugi", "Skull Knight", "Chakra", "Default Map 00", "Default Map 01", "Default Map 02", "Default Map 03", "Default Map 04", "Default Map 05", "Default Map 06", "Default Map 07", "Default Map 08", "Default Map 09", "Default Map 10", "Default Map 11", "Default Map 12", "Default Map 13", "Default Map 14", "Default Map 15", "Default Map 16", "Default Map 17", "Default Map 18", "Default Map 19", "Default Map 20", "Default Map 21", "Default Map 22", "Default Map 23" });
+            lbMapSelection.Location = new Point(5, 56);
+            lbMapSelection.Name = "lbMapSelection";
+            lbMapSelection.Size = new Size(150, 604);
+            lbMapSelection.TabIndex = 0;
+            lbMapSelection.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+            // 
+            // scEditMapTiles
+            // 
+            scEditMapTiles.Dock = DockStyle.Fill;
+            scEditMapTiles.Location = new Point(0, 0);
+            scEditMapTiles.Name = "scEditMapTiles";
+            scEditMapTiles.Orientation = Orientation.Horizontal;
+            // 
+            // scEditMapTiles.Panel1
+            // 
+            scEditMapTiles.Panel1.BackColor = Color.LightGray;
+            scEditMapTiles.Panel1.Controls.Add(label3);
+            scEditMapTiles.Panel1.Controls.Add(LklblGithub);
+            scEditMapTiles.Panel1.Controls.Add(lblMapCurrentISOResult);
+            scEditMapTiles.Panel1.Controls.Add(lblMapCurrentlyLoadedISO);
+            scEditMapTiles.Panel1.Controls.Add(btnSaveMap);
+            scEditMapTiles.Panel1.Controls.Add(btnMapLoadISo);
+            // 
+            // scEditMapTiles.Panel2
+            // 
+            scEditMapTiles.Panel2.BackColor = Color.Gainsboro;
+            scEditMapTiles.Panel2.Controls.Add(pbSelectedTile);
+            scEditMapTiles.Panel2.Controls.Add(lblSelectedTile);
+            scEditMapTiles.Panel2.Controls.Add(tbPallete);
+            scEditMapTiles.Size = new Size(318, 665);
+            scEditMapTiles.SplitterDistance = 164;
+            scEditMapTiles.TabIndex = 0;
+            // 
+            // label3
+            // 
+            label3.AutoEllipsis = true;
+            label3.Location = new Point(20, 9);
+            label3.Name = "label3";
+            label3.Size = new Size(141, 50);
+            label3.TabIndex = 5;
+            label3.Text = "Ported version of the DOTR Map by: ";
+            // 
+            // LklblGithub
+            // 
+            LklblGithub.AutoSize = true;
+            LklblGithub.Location = new Point(177, 19);
+            LklblGithub.Name = "LklblGithub";
+            LklblGithub.Size = new Size(115, 20);
+            LklblGithub.TabIndex = 4;
+            LklblGithub.TabStop = true;
+            LklblGithub.Text = "rjoken/Thotsicle";
+            LklblGithub.LinkClicked += linkLabel1_LinkClicked;
+            // 
+            // lblMapCurrentISOResult
+            // 
+            lblMapCurrentISOResult.AutoEllipsis = true;
+            lblMapCurrentISOResult.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            lblMapCurrentISOResult.Location = new Point(143, 102);
+            lblMapCurrentISOResult.Name = "lblMapCurrentISOResult";
+            lblMapCurrentISOResult.Size = new Size(171, 57);
+            lblMapCurrentISOResult.TabIndex = 3;
+            lblMapCurrentISOResult.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblMapCurrentlyLoadedISO
+            // 
+            lblMapCurrentlyLoadedISO.AutoSize = true;
+            lblMapCurrentlyLoadedISO.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
+            lblMapCurrentlyLoadedISO.Location = new Point(177, 72);
+            lblMapCurrentlyLoadedISO.Name = "lblMapCurrentlyLoadedISO";
+            lblMapCurrentlyLoadedISO.Size = new Size(108, 25);
+            lblMapCurrentlyLoadedISO.TabIndex = 2;
+            lblMapCurrentlyLoadedISO.Text = "Current ISO:";
+            // 
+            // btnSaveMap
+            // 
+            btnSaveMap.Location = new Point(30, 107);
+            btnSaveMap.Name = "btnSaveMap";
+            btnSaveMap.Size = new Size(94, 52);
+            btnSaveMap.TabIndex = 1;
+            btnSaveMap.Text = "Save Maps to ISO";
+            btnSaveMap.UseVisualStyleBackColor = true;
+            btnSaveMap.Click += btnSaveMapsToISO;
+            // 
+            // btnMapLoadISo
+            // 
+            btnMapLoadISo.Location = new Point(30, 72);
+            btnMapLoadISo.Name = "btnMapLoadISo";
+            btnMapLoadISo.Size = new Size(94, 29);
+            btnMapLoadISo.TabIndex = 0;
+            btnMapLoadISo.Text = "Load ISO";
+            btnMapLoadISo.UseVisualStyleBackColor = true;
+            btnMapLoadISo.Click += btnMapLoadISo_Click;
+            // 
+            // pbSelectedTile
+            // 
+            pbSelectedTile.Image = (Image)resources.GetObject("pbSelectedTile.Image");
+            pbSelectedTile.Location = new Point(14, 199);
+            pbSelectedTile.Name = "pbSelectedTile";
+            pbSelectedTile.Size = new Size(88, 86);
+            pbSelectedTile.SizeMode = PictureBoxSizeMode.Zoom;
+            pbSelectedTile.TabIndex = 2;
+            pbSelectedTile.TabStop = false;
+            // 
+            // lblSelectedTile
+            // 
+            lblSelectedTile.AutoSize = true;
+            lblSelectedTile.Location = new Point(14, 173);
+            lblSelectedTile.Name = "lblSelectedTile";
+            lblSelectedTile.Size = new Size(90, 20);
+            lblSelectedTile.TabIndex = 1;
+            lblSelectedTile.Text = "SelectedTile";
+            // 
+            // tbPallete
+            // 
+            tbPallete.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            tbPallete.ColumnCount = 2;
+            tbPallete.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tbPallete.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tbPallete.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tbPallete.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tbPallete.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            tbPallete.Controls.Add(pbCrush, 1, 4);
+            tbPallete.Controls.Add(pbLab, 0, 4);
+            tbPallete.Controls.Add(pbNormal, 1, 3);
+            tbPallete.Controls.Add(pbToon, 0, 3);
+            tbPallete.Controls.Add(pbYami, 1, 2);
+            tbPallete.Controls.Add(pbSea, 0, 2);
+            tbPallete.Controls.Add(pbMountain, 0, 1);
+            tbPallete.Controls.Add(pbForest, 0, 0);
+            tbPallete.Controls.Add(pbMeadow, 1, 1);
+            tbPallete.Controls.Add(pbWasteland, 1, 0);
+            tbPallete.Location = new Point(118, 12);
+            tbPallete.Name = "tbPallete";
+            tbPallete.RowCount = 5;
+            tbPallete.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tbPallete.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tbPallete.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tbPallete.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tbPallete.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+            tbPallete.Size = new Size(196, 463);
+            tbPallete.TabIndex = 0;
+            // 
+            // pbCrush
+            // 
+            pbCrush.Dock = DockStyle.Fill;
+            pbCrush.Image = Properties.Resources.CRUSH;
+            pbCrush.Location = new Point(101, 371);
+            pbCrush.Name = "pbCrush";
+            pbCrush.Size = new Size(92, 89);
+            pbCrush.SizeMode = PictureBoxSizeMode.Zoom;
+            pbCrush.TabIndex = 9;
+            pbCrush.TabStop = false;
+            pbCrush.Click += pbCrush_Click;
+            // 
+            // pbLab
+            // 
+            pbLab.Dock = DockStyle.Fill;
+            pbLab.Image = Properties.Resources.LABYRINTH;
+            pbLab.Location = new Point(3, 371);
+            pbLab.Name = "pbLab";
+            pbLab.Size = new Size(92, 89);
+            pbLab.SizeMode = PictureBoxSizeMode.Zoom;
+            pbLab.TabIndex = 8;
+            pbLab.TabStop = false;
+            pbLab.Click += pbLab_Click;
+            // 
+            // pbNormal
+            // 
+            pbNormal.Dock = DockStyle.Fill;
+            pbNormal.Image = Properties.Resources.NORMAL;
+            pbNormal.Location = new Point(101, 279);
+            pbNormal.Name = "pbNormal";
+            pbNormal.Size = new Size(92, 86);
+            pbNormal.SizeMode = PictureBoxSizeMode.Zoom;
+            pbNormal.TabIndex = 7;
+            pbNormal.TabStop = false;
+            pbNormal.Click += pbNormal_Click;
+            // 
+            // pbToon
+            // 
+            pbToon.Dock = DockStyle.Fill;
+            pbToon.Image = Properties.Resources.TOON;
+            pbToon.Location = new Point(3, 279);
+            pbToon.Name = "pbToon";
+            pbToon.Size = new Size(92, 86);
+            pbToon.SizeMode = PictureBoxSizeMode.Zoom;
+            pbToon.TabIndex = 6;
+            pbToon.TabStop = false;
+            pbToon.Click += pbToon_Click;
+            // 
+            // pbYami
+            // 
+            pbYami.Dock = DockStyle.Fill;
+            pbYami.Image = Properties.Resources.DARK;
+            pbYami.Location = new Point(101, 187);
+            pbYami.Name = "pbYami";
+            pbYami.Size = new Size(92, 86);
+            pbYami.SizeMode = PictureBoxSizeMode.Zoom;
+            pbYami.TabIndex = 5;
+            pbYami.TabStop = false;
+            pbYami.Click += pbYami_Click;
+            // 
+            // pbSea
+            // 
+            pbSea.Dock = DockStyle.Fill;
+            pbSea.Image = Properties.Resources.SEA;
+            pbSea.Location = new Point(3, 187);
+            pbSea.Name = "pbSea";
+            pbSea.Size = new Size(92, 86);
+            pbSea.SizeMode = PictureBoxSizeMode.Zoom;
+            pbSea.TabIndex = 4;
+            pbSea.TabStop = false;
+            pbSea.Click += pbSea_Click;
+            // 
+            // pbMountain
+            // 
+            pbMountain.Dock = DockStyle.Fill;
+            pbMountain.Image = Properties.Resources.MOUNTAIN;
+            pbMountain.Location = new Point(3, 95);
+            pbMountain.Name = "pbMountain";
+            pbMountain.Size = new Size(92, 86);
+            pbMountain.SizeMode = PictureBoxSizeMode.Zoom;
+            pbMountain.TabIndex = 2;
+            pbMountain.TabStop = false;
+            pbMountain.Click += pbMountain_Click;
+            // 
+            // pbForest
+            // 
+            pbForest.Dock = DockStyle.Fill;
+            pbForest.Image = (Image)resources.GetObject("pbForest.Image");
+            pbForest.Location = new Point(3, 3);
+            pbForest.Name = "pbForest";
+            pbForest.Size = new Size(92, 86);
+            pbForest.SizeMode = PictureBoxSizeMode.Zoom;
+            pbForest.TabIndex = 0;
+            pbForest.TabStop = false;
+            pbForest.Click += pbForest_Click;
+            // 
+            // pbMeadow
+            // 
+            pbMeadow.Dock = DockStyle.Fill;
+            pbMeadow.Image = Properties.Resources.MEADOW;
+            pbMeadow.Location = new Point(101, 95);
+            pbMeadow.Name = "pbMeadow";
+            pbMeadow.Size = new Size(92, 86);
+            pbMeadow.SizeMode = PictureBoxSizeMode.Zoom;
+            pbMeadow.TabIndex = 3;
+            pbMeadow.TabStop = false;
+            pbMeadow.Click += pbMeadow_Click;
+            // 
+            // pbWasteland
+            // 
+            pbWasteland.Image = Properties.Resources.WASTELAND;
+            pbWasteland.Location = new Point(101, 3);
+            pbWasteland.Name = "pbWasteland";
+            pbWasteland.Size = new Size(92, 86);
+            pbWasteland.SizeMode = PictureBoxSizeMode.Zoom;
+            pbWasteland.TabIndex = 1;
+            pbWasteland.TabStop = false;
+            pbWasteland.Click += pbWasteland_Click;
+            // 
+            // lblMapSideWhite
+            // 
+            lblMapSideWhite.AutoSize = true;
+            lblMapSideWhite.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
+            lblMapSideWhite.Location = new Point(213, 72);
+            lblMapSideWhite.Name = "lblMapSideWhite";
+            lblMapSideWhite.Size = new Size(97, 25);
+            lblMapSideWhite.TabIndex = 2;
+            lblMapSideWhite.Text = "White Side";
+            // 
+            // lblMapSideRed
+            // 
+            lblMapSideRed.AutoSize = true;
+            lblMapSideRed.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point);
+            lblMapSideRed.Location = new Point(213, 618);
+            lblMapSideRed.Name = "lblMapSideRed";
+            lblMapSideRed.Size = new Size(81, 25);
+            lblMapSideRed.TabIndex = 1;
+            lblMapSideRed.Text = "Red Side";
+            // 
+            // lblMapName
+            // 
+            lblMapName.AutoSize = true;
+            lblMapName.Font = new Font("Segoe UI", 13.8F, FontStyle.Regular, GraphicsUnit.Point);
+            lblMapName.Location = new Point(114, 19);
+            lblMapName.Name = "lblMapName";
+            lblMapName.Size = new Size(72, 31);
+            lblMapName.TabIndex = 0;
+            lblMapName.Text = "Map: ";
+            lblMapName.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // RefreshEditor
+            // 
+            RefreshEditor.Tick += RefreshEditor_Tick;
             // 
             // Form1
             // 
@@ -600,6 +1035,35 @@ namespace DOTRModder
             tbFusions.PerformLayout();
             tabSlotRewards.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)SlotRewardsDataGridView).EndInit();
+            tbEditMap.ResumeLayout(false);
+            scEditMapMain.Panel1.ResumeLayout(false);
+            scEditMapMain.Panel2.ResumeLayout(false);
+            scEditMapMain.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)scEditMapMain).EndInit();
+            scEditMapMain.ResumeLayout(false);
+            scEditMapToSelect.Panel1.ResumeLayout(false);
+            scEditMapToSelect.Panel1.PerformLayout();
+            scEditMapToSelect.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)scEditMapToSelect).EndInit();
+            scEditMapToSelect.ResumeLayout(false);
+            scEditMapTiles.Panel1.ResumeLayout(false);
+            scEditMapTiles.Panel1.PerformLayout();
+            scEditMapTiles.Panel2.ResumeLayout(false);
+            scEditMapTiles.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)scEditMapTiles).EndInit();
+            scEditMapTiles.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pbSelectedTile).EndInit();
+            tbPallete.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pbCrush).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbLab).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbNormal).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbToon).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbYami).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbSea).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbMountain).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbForest).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbMeadow).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pbWasteland).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -685,5 +1149,35 @@ namespace DOTRModder
         private Button btn_DefaultSettings;
         private Button btnSlotDefault;
         private CheckBox cb_fastIntro;
+        private TabPage tbEditMap;
+        private SplitContainer scEditMapMain;
+        private SplitContainer scEditMapToSelect;
+        private Label lblMapToSelect;
+        private ListBox lbMapSelection;
+        private SplitContainer scEditMapTiles;
+        private PictureBox pbSelectedTile;
+        private Label lblSelectedTile;
+        private Button btnSaveMap;
+        private Button btnMapLoadISo;
+        private Label lblMapCurrentlyLoadedISO;
+        private Label lblMapName;
+        private Label lblMapCurrentISOResult;
+        private TableLayoutPanel tbPallete;
+        private PictureBox pbCrush;
+        private PictureBox pbLab;
+        private PictureBox pbNormal;
+        private PictureBox pbToon;
+        private PictureBox pbYami;
+        private PictureBox pbSea;
+        private PictureBox pbMeadow;
+        private PictureBox pbMountain;
+        private PictureBox pbWasteland;
+        private PictureBox pbForest;
+        public System.Windows.Forms.Timer RefreshEditor;
+        private CheckBox cbCustomMaps;
+        private Label lblMapSideRed;
+        private Label lblMapSideWhite;
+        private LinkLabel LklblGithub;
+        private Label label3;
     }
 }
