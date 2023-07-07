@@ -1,4 +1,4 @@
-﻿namespace DOTRModder
+﻿namespace DOTRModder.MapRelated
 {
     public enum Terrain
     {

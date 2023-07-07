@@ -70,7 +70,18 @@ namespace DOTRModder
             exitToolStripMenuItem = new ToolStripMenuItem();
             tcMaster = new TabControl();
             tbFusions = new TabPage();
-            label2 = new Label();
+            scFusionsMain = new SplitContainer();
+            LlblBlayr = new LinkLabel();
+            lblFusions = new Label();
+            btnSaveFusion = new Button();
+            dgvFusions = new DataGridView();
+            Index = new DataGridViewTextBoxColumn();
+            LCNumber = new DataGridViewTextBoxColumn();
+            LCName = new DataGridViewTextBoxColumn();
+            HCNumber = new DataGridViewTextBoxColumn();
+            HCName = new DataGridViewTextBoxColumn();
+            ResultNum = new DataGridViewTextBoxColumn();
+            ResultName = new DataGridViewTextBoxColumn();
             tabSlotRewards = new TabPage();
             btnSlotDefault = new Button();
             btn_SaveSlots = new Button();
@@ -107,6 +118,7 @@ namespace DOTRModder
             lblMapSideRed = new Label();
             lblMapName = new Label();
             RefreshEditor = new System.Windows.Forms.Timer(components);
+            label2 = new Label();
             tbMain = new TabPage();
             tbMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)num_LpCap).BeginInit();
@@ -115,6 +127,11 @@ namespace DOTRModder
             menuStrip1.SuspendLayout();
             tcMaster.SuspendLayout();
             tbFusions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)scFusionsMain).BeginInit();
+            scFusionsMain.Panel1.SuspendLayout();
+            scFusionsMain.Panel2.SuspendLayout();
+            scFusionsMain.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvFusions).BeginInit();
             tabSlotRewards.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)SlotRewardsDataGridView).BeginInit();
             tbEditMap.SuspendLayout();
@@ -178,7 +195,7 @@ namespace DOTRModder
             tbMain.Location = new Point(4, 32);
             tbMain.Name = "tbMain";
             tbMain.Padding = new Padding(3);
-            tbMain.Size = new Size(1008, 671);
+            tbMain.Size = new Size(1008, 670);
             tbMain.TabIndex = 0;
             tbMain.Text = "Main";
             // 
@@ -540,32 +557,144 @@ namespace DOTRModder
             tcMaster.Controls.Add(tbFusions);
             tcMaster.Controls.Add(tabSlotRewards);
             tcMaster.Controls.Add(tbEditMap);
-            tcMaster.Location = new Point(0, 29);
+            tcMaster.Dock = DockStyle.Fill;
+            tcMaster.Location = new Point(0, 30);
             tcMaster.Name = "tcMaster";
             tcMaster.SelectedIndex = 0;
-            tcMaster.Size = new Size(1016, 707);
+            tcMaster.Size = new Size(1016, 706);
             tcMaster.TabIndex = 24;
             // 
             // tbFusions
             // 
             tbFusions.BackColor = Color.LightGray;
-            tbFusions.Controls.Add(label2);
+            tbFusions.Controls.Add(scFusionsMain);
             tbFusions.Location = new Point(4, 32);
             tbFusions.Name = "tbFusions";
             tbFusions.Padding = new Padding(3);
-            tbFusions.Size = new Size(1008, 671);
+            tbFusions.Size = new Size(1008, 670);
             tbFusions.TabIndex = 1;
             tbFusions.Text = "Fusions";
             // 
-            // label2
+            // scFusionsMain
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 48F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.Location = new Point(355, 259);
-            label2.Name = "label2";
-            label2.Size = new Size(186, 106);
-            label2.TabIndex = 0;
-            label2.Text = "WIP";
+            scFusionsMain.Dock = DockStyle.Fill;
+            scFusionsMain.Location = new Point(3, 3);
+            scFusionsMain.Name = "scFusionsMain";
+            scFusionsMain.Orientation = Orientation.Horizontal;
+            // 
+            // scFusionsMain.Panel1
+            // 
+            scFusionsMain.Panel1.Controls.Add(LlblBlayr);
+            scFusionsMain.Panel1.Controls.Add(lblFusions);
+            scFusionsMain.Panel1.Controls.Add(btnSaveFusion);
+            // 
+            // scFusionsMain.Panel2
+            // 
+            scFusionsMain.Panel2.Controls.Add(label2);
+            scFusionsMain.Panel2.Controls.Add(dgvFusions);
+            scFusionsMain.Size = new Size(1002, 664);
+            scFusionsMain.SplitterDistance = 40;
+            scFusionsMain.TabIndex = 0;
+            // 
+            // LlblBlayr
+            // 
+            LlblBlayr.AutoSize = true;
+            LlblBlayr.Dock = DockStyle.Left;
+            LlblBlayr.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
+            LlblBlayr.Location = new Point(110, 0);
+            LlblBlayr.Name = "LlblBlayr";
+            LlblBlayr.Padding = new Padding(5, 12, 0, 0);
+            LlblBlayr.Size = new Size(173, 35);
+            LlblBlayr.TabIndex = 5;
+            LlblBlayr.TabStop = true;
+            LlblBlayr.Text = "Blayr's Modding Tool";
+            // 
+            // lblFusions
+            // 
+            lblFusions.AccessibleRole = AccessibleRole.None;
+            lblFusions.AutoSize = true;
+            lblFusions.Dock = DockStyle.Left;
+            lblFusions.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point);
+            lblFusions.Location = new Point(0, 0);
+            lblFusions.Margin = new Padding(5);
+            lblFusions.Name = "lblFusions";
+            lblFusions.Padding = new Padding(5, 12, 0, 0);
+            lblFusions.Size = new Size(110, 35);
+            lblFusions.TabIndex = 4;
+            lblFusions.Text = "Ported from:";
+            // 
+            // btnSaveFusion
+            // 
+            btnSaveFusion.Dock = DockStyle.Right;
+            btnSaveFusion.Location = new Point(908, 0);
+            btnSaveFusion.Name = "btnSaveFusion";
+            btnSaveFusion.Size = new Size(94, 40);
+            btnSaveFusion.TabIndex = 0;
+            btnSaveFusion.Text = "Save";
+            btnSaveFusion.UseVisualStyleBackColor = true;
+            // 
+            // dgvFusions
+            // 
+            dgvFusions.AllowUserToAddRows = false;
+            dgvFusions.AllowUserToDeleteRows = false;
+            dgvFusions.AllowUserToOrderColumns = true;
+            dgvFusions.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvFusions.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCells;
+            dgvFusions.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvFusions.Columns.AddRange(new DataGridViewColumn[] { Index, LCNumber, LCName, HCNumber, HCName, ResultNum, ResultName });
+            dgvFusions.Dock = DockStyle.Fill;
+            dgvFusions.Location = new Point(0, 0);
+            dgvFusions.MultiSelect = false;
+            dgvFusions.Name = "dgvFusions";
+            dgvFusions.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Sunken;
+            dgvFusions.RowHeadersVisible = false;
+            dgvFusions.RowHeadersWidth = 51;
+            dgvFusions.RowTemplate.Height = 29;
+            dgvFusions.Size = new Size(1002, 620);
+            dgvFusions.TabIndex = 0;
+            dgvFusions.CellContentClick += dgvFusions_CellContentClick;
+            // 
+            // Index
+            // 
+            Index.HeaderText = "Index";
+            Index.MinimumWidth = 6;
+            Index.Name = "Index";
+            // 
+            // LCNumber
+            // 
+            LCNumber.HeaderText = "LC#";
+            LCNumber.MinimumWidth = 6;
+            LCNumber.Name = "LCNumber";
+            // 
+            // LCName
+            // 
+            LCName.HeaderText = "Lower Card Name";
+            LCName.MinimumWidth = 6;
+            LCName.Name = "LCName";
+            // 
+            // HCNumber
+            // 
+            HCNumber.HeaderText = "HC#";
+            HCNumber.MinimumWidth = 6;
+            HCNumber.Name = "HCNumber";
+            // 
+            // HCName
+            // 
+            HCName.HeaderText = "Hight Card Name";
+            HCName.MinimumWidth = 6;
+            HCName.Name = "HCName";
+            // 
+            // ResultNum
+            // 
+            ResultNum.HeaderText = "Result#";
+            ResultNum.MinimumWidth = 6;
+            ResultNum.Name = "ResultNum";
+            // 
+            // ResultName
+            // 
+            ResultName.HeaderText = "Result Name";
+            ResultName.MinimumWidth = 6;
+            ResultName.Name = "ResultName";
             // 
             // tabSlotRewards
             // 
@@ -576,7 +705,7 @@ namespace DOTRModder
             tabSlotRewards.Location = new Point(4, 32);
             tabSlotRewards.Name = "tabSlotRewards";
             tabSlotRewards.Padding = new Padding(3);
-            tabSlotRewards.Size = new Size(1008, 671);
+            tabSlotRewards.Size = new Size(1008, 670);
             tabSlotRewards.TabIndex = 2;
             tabSlotRewards.Text = "Slot Rewards";
             // 
@@ -651,7 +780,7 @@ namespace DOTRModder
             tbEditMap.Location = new Point(4, 32);
             tbEditMap.Name = "tbEditMap";
             tbEditMap.Padding = new Padding(3);
-            tbEditMap.Size = new Size(1008, 671);
+            tbEditMap.Size = new Size(1008, 670);
             tbEditMap.TabIndex = 3;
             tbEditMap.Text = "Edit Map";
             tbEditMap.UseVisualStyleBackColor = true;
@@ -676,7 +805,7 @@ namespace DOTRModder
             scEditMapMain.Panel2.MouseDown += scEditMapMain_Panel2_MouseDown;
             scEditMapMain.Panel2.MouseMove += scEditMapMain_Panel2_MouseMove;
             scEditMapMain.Panel2.MouseUp += scEditMapMain_Panel2_MouseUp;
-            scEditMapMain.Size = new Size(1002, 665);
+            scEditMapMain.Size = new Size(1002, 664);
             scEditMapMain.SplitterDistance = 481;
             scEditMapMain.TabIndex = 0;
             // 
@@ -695,7 +824,7 @@ namespace DOTRModder
             // scEditMapToSelect.Panel2
             // 
             scEditMapToSelect.Panel2.Controls.Add(scEditMapTiles);
-            scEditMapToSelect.Size = new Size(481, 665);
+            scEditMapToSelect.Size = new Size(481, 664);
             scEditMapToSelect.SplitterDistance = 159;
             scEditMapToSelect.TabIndex = 0;
             // 
@@ -744,8 +873,8 @@ namespace DOTRModder
             scEditMapTiles.Panel2.Controls.Add(pbSelectedTile);
             scEditMapTiles.Panel2.Controls.Add(lblSelectedTile);
             scEditMapTiles.Panel2.Controls.Add(tbPallete);
-            scEditMapTiles.Size = new Size(318, 665);
-            scEditMapTiles.SplitterDistance = 164;
+            scEditMapTiles.Size = new Size(318, 664);
+            scEditMapTiles.SplitterDistance = 163;
             scEditMapTiles.TabIndex = 0;
             // 
             // label3
@@ -755,7 +884,7 @@ namespace DOTRModder
             label3.Name = "label3";
             label3.Size = new Size(141, 50);
             label3.TabIndex = 5;
-            label3.Text = "Ported version of the DOTR Map by: ";
+            label3.Text = "Ported version of  DOTR Map by: ";
             // 
             // LklblGithub
             // 
@@ -1011,6 +1140,16 @@ namespace DOTRModder
             // 
             RefreshEditor.Tick += RefreshEditor_Tick;
             // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 36F, FontStyle.Regular, GraphicsUnit.Point);
+            label2.Location = new Point(385, 266);
+            label2.Name = "label2";
+            label2.Size = new Size(141, 81);
+            label2.TabIndex = 6;
+            label2.Text = "WIP";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -1032,7 +1171,13 @@ namespace DOTRModder
             menuStrip1.PerformLayout();
             tcMaster.ResumeLayout(false);
             tbFusions.ResumeLayout(false);
-            tbFusions.PerformLayout();
+            scFusionsMain.Panel1.ResumeLayout(false);
+            scFusionsMain.Panel1.PerformLayout();
+            scFusionsMain.Panel2.ResumeLayout(false);
+            scFusionsMain.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)scFusionsMain).EndInit();
+            scFusionsMain.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvFusions).EndInit();
             tabSlotRewards.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)SlotRewardsDataGridView).EndInit();
             tbEditMap.ResumeLayout(false);
@@ -1114,13 +1259,8 @@ namespace DOTRModder
         private TabControl tcMaster;
         private TabPage tbMain;
         private TabPage tbFusions;
-        private Label label2;
         private TabPage tabSlotRewards;
-        private DataGridView SlotRewardsDataGridView;
         private DataGridViewColumn index;
-        private DataGridViewTextBoxColumn number;
-        private DataGridViewComboBoxColumn threeInARow;
-        private DataGridViewComboBoxColumn Reward;
         private Button btn_SaveSlots;
         private Panel panel1;
         private NumericUpDown num_LpCap;
@@ -1179,5 +1319,22 @@ namespace DOTRModder
         private Label lblMapSideWhite;
         private LinkLabel LklblGithub;
         private Label label3;
+        private SplitContainer scFusionsMain;
+        private DataGridView dgvFusions;
+        private DataGridViewTextBoxColumn Index;
+        private DataGridViewTextBoxColumn LCNumber;
+        private DataGridViewTextBoxColumn LCName;
+        private DataGridViewTextBoxColumn HCNumber;
+        private DataGridViewTextBoxColumn HCName;
+        private DataGridViewTextBoxColumn ResultNum;
+        private DataGridViewTextBoxColumn ResultName;
+        private DataGridView SlotRewardsDataGridView;
+        private DataGridViewTextBoxColumn number;
+        private DataGridViewComboBoxColumn threeInARow;
+        private DataGridViewComboBoxColumn Reward;
+        private Button btnSaveFusion;
+        private LinkLabel LlblBlayr;
+        private Label lblFusions;
+        private Label label2;
     }
 }

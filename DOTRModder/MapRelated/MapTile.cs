@@ -7,7 +7,7 @@ using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DOTRModder
+namespace DOTRModder.MapRelated
 {
     public class MapTile
     {
@@ -17,7 +17,7 @@ namespace DOTRModder
         bool hovered;
         public static int tileSize = 70;
         ResourceManager resources = new ResourceManager(typeof(Form1));
-        
+
         public MapTile()
         {
             terrain = Terrain.NORMAL;

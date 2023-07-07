@@ -1,3 +1,4 @@
+using DOTRModder.MapRelated;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using System.Diagnostics;
@@ -77,15 +78,25 @@ namespace DOTRModder
             CurrentStatus.Text = "Press Start When Ready";
             scEditMapMain.IsSplitterFixed = true;
             scEditMapTiles.IsSplitterFixed = true;
-            scEditMapToSelect.IsSplitterFixed= true;
+            scEditMapToSelect.IsSplitterFixed = true;
             RefreshEditor.Interval = 1000 / 60;
             RefreshEditor.Enabled = true;
             SetDoubleBuffered(scEditMapMain);
             SetDoubleBuffered(scEditMapMain.Panel2);
             UpdateStyles();
             LoadDefaultMaps();
+            MakeFusionsSortable();
 
 
+
+        }
+        public void MakeFusionsSortable()
+        {
+            foreach (var item in dgvFusions.Columns)
+            {
+                DataGridViewColumn column = item as DataGridViewColumn;
+                column.SortMode = DataGridViewColumnSortMode.Programmatic;
+            }
 
         }
         public void SetTabsEnabled(bool enabled)
@@ -761,8 +772,8 @@ namespace DOTRModder
                     try
                     {
                         editMapISOPath = ofd.FileName;
-                        MessageBox.Show(ofd.SafeFileName);
                         EditMapFileIso = OpenIso(editMapISOPath, EditMapFileIso);
+                        MessageBox.Show(ofd.SafeFileName + " Loaded");
                         lblMapCurrentISOResult.Text = $"{ofd.SafeFileName}";
                         lbMapSelection.SelectedIndex = 0;
                     }
@@ -830,6 +841,26 @@ namespace DOTRModder
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("explorer.exe", "https://github.com/rjoken/DOTRMap");
+        }
+
+        private void scrollFusion_Scroll(object sender, ScrollEventArgs e)
+        {
+            dgvFusions.FirstDisplayedScrollingRowIndex = e.NewValue;
+        }
+
+        private void dgvFusions_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void LlblBlayr_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("explorer.exe", "https://github.com/Blayr/DOTR-Modding-Tool");
+        }
+
+        private void lblFusions_Click(object sender, EventArgs e)
+        {
+
         }
     }
 

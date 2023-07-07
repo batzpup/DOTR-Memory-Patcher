@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DOTRModder
+namespace DOTRModder.MapRelated
 {
     public class DotrMap
     {
         public MapTile[] tiles;
 
-        
+
         public DotrMap()
         {
             // creates a blank map of all NORMAL
@@ -92,7 +92,7 @@ namespace DOTRModder
             for (int i = 0; i < tiles.Length; i++)
             {
                 // if divisible by 7, go to new row
-                if ((i > 0) && (i % 7 == 0))
+                if (i > 0 && i % 7 == 0)
                 {
                     x = startx;
                     y += MapTile.tileSize;
