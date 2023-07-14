@@ -27,6 +27,7 @@ namespace DOTRModder
         ExtraSlotRewards,
         FastIntro,
         UseCustomMaps,
+        KeepReincarnatedCard,
     }
 
     //Just Enable or disable no Customisation
@@ -70,7 +71,7 @@ namespace DOTRModder
         //Maps Editing
         static IntPtr MapInfo = 0x202CEE5C;
         // QOL ToDoMaybe fix movement issue for field fusions
-        static IntPtr ChangeReincarnationAmountPtr = 0x20228190;
+        
         static IntPtr SetoMainAINop = 0x20117ca0; //Make seto only pass
         static IntPtr SetoMainAIReturn = 0x20117e40;
         static IntPtr LockTeamSelection = 0x2021c6f0; // lock the selection options
@@ -82,6 +83,10 @@ namespace DOTRModder
         static IntPtr RemoveRngFromSlots = 0x202511b4;
         static IntPtr ExpandZoom = 0x201d2c00;
         static IntPtr NerfTerrain = 0x20266490;
+
+        //Reincarnation
+        static IntPtr ChangeReincarnationAmountPtr = 0x20228190;
+        static IntPtr RemoveLoseCardOnReincarnation = 0x201b9e1c;
 
         // Fusions
         static IntPtr FusionListBytePtr = 0x2029E830;
@@ -139,12 +144,13 @@ namespace DOTRModder
         static IntPtr MoreDigitsOnScreen = 0x201b1bd0;
 
         // Remove going to each unit when they arent going to be moved
-        static IntPtr improveAIInputOrig = 0x2027646c;
+        static IntPtr improveAIInputOrig = 0x20276300;
         static IntPtr improveAIInputDest = 0x20360100;
 
         //Probably wont use but good to know
         static IntPtr ExpandSelectionRange = 0x201d2c94;
         static IntPtr ExpandSelectionRange2 = 0x201d2cdc;
+        static bool FastIntroBool;
         //Mem.PatchEx(ExpandSelectionRange, "\x0a\x00\x42\x28 ", 4);
         //Mem.PatchEx(ExpandSelectionRange2, "\x0a\x00\x42\x28", 4);
         #endregion
@@ -277,10 +283,12 @@ namespace DOTRModder
                     if (enabled)
                     {
                         modListSimple += FastIntro;
+                        FastIntroBool = true;
                     }
                     else
                     {
                         modListSimple -= FastIntro;
+                        FastIntroBool = false;
                     }
                     break;
                 case SimpleModBools.UseCustomMaps:
@@ -293,10 +301,20 @@ namespace DOTRModder
                         modListSimple -= UseCustomMaps;
                     }
                     break;
+                case SimpleModBools.KeepReincarnatedCard:
+                    if (enabled)
+                    {
+                        modListSimple += RemoveReincarnationCardLoss;
+                    }
+                    else
+                    {
+                        modListSimple -= RemoveReincarnationCardLoss;
+                    }
+                    break;
             }
         }
 
-       
+
 
         static bool enableSpecificTeamFirst;
         static void HandleBoolAndIntCheckbox(ModBoolsIntPair name, bool enabled, int value)
@@ -364,6 +382,10 @@ namespace DOTRModder
             Mem.PatchEx(ChangeReincarnationAmountPtr, bytes, bytes.Length,hproc);
             
         }
+        static void RemoveReincarnationCardLoss()
+        {
+            Mem.NopMips(RemoveLoseCardOnReincarnation, 1, hproc);
+        }
        
 
         static  void MakeSetoUseless()
@@ -412,24 +434,43 @@ namespace DOTRModder
 
         static void ForceNewGameStartTeam(int side)
         {
-            
-
-            //Loads team 1 into a1 register
             Mem.PatchEx(LockTeamSelection2, new byte[4] { 0x01, 0x00, 0x05, 0x24 }, 4, hproc);
-
-            //Assigns has completed white side the value of a1
-            
-            //changes your selected menu options to 0/ yorkists
-            //leave this out to auto select red
-            if (side == 1)
+            if (FastIntroBool)
             {
-                Mem.PatchEx(LockTeamSelection, new byte[4] { 0x02, 0x00, 0x25, 0xa2 }, 4, hproc);
-                Mem.PatchEx(SelectWhiteDefault, new byte[4] { 0xa8, 0x53, 0x20, 0xa0 }, 4, hproc);
+                Mem.NopMips(0x2021ecc0, 11, hproc);
+                Mem.PatchEx(0x2021f2b4, new byte[4] { 0x30,  0x7b, 0x08,  0x08 }, 4, hproc);
+                if (side == 1)
+                {
+                    Mem.PatchEx(LockTeamSelection, new byte[4] { 0x02, 0x00, 0x25, 0xa2 }, 4, hproc);
+                    Mem.PatchEx(0x2021ecc0, new byte[44] { 0x01, 0x00, 0x63, 0x24, 0x00, 0x00, 0x18, 0x24, 0xa8, 0x53, 0x38, 0xa0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xaf, 0x7c, 0x08, 0x08, 0x00, 0x00, 0x00, 0x00 }, 44, hproc);
+                }
+                else
+                {
+                    Mem.PatchEx(LockTeamSelection - 4, new byte[4] { 0x01, 0x00, 0x25, 0xa2 }, 4, hproc);
+                    Mem.PatchEx(0x2021ecc0, new byte[44] { 0x01, 0x00, 0x63, 0x24, 0x01, 0x00, 0x18, 0x24, 0xa8, 0x53, 0x38, 0xa0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xaf, 0x7c, 0x08, 0x08, 0x00, 0x00, 0x00, 0x00 }, 44, hproc);
+                }
             }
             else
             {
-                Mem.PatchEx(LockTeamSelection-4, new byte[4] { 0x01, 0x00, 0x25, 0xa2 }, 4, hproc);
+                //Loads team 1 into a1 register
+                
+
+                //Assigns has completed white side the value of a1
+
+                //changes your selected menu options to 0/ yorkists
+                //leave this out to auto select red
+                if (side == 1)
+                {
+                    Mem.PatchEx(LockTeamSelection, new byte[4] { 0x02, 0x00, 0x25, 0xa2 }, 4, hproc);
+                    Mem.PatchEx(SelectWhiteDefault, new byte[4] { 0xa8, 0x53, 0x20, 0xa0 }, 4, hproc);
+                }
+                else
+                {
+                    Mem.PatchEx(LockTeamSelection - 4, new byte[4] { 0x01, 0x00, 0x25, 0xa2 }, 4, hproc);
+                }
             }
+
+           
             
         }
 
@@ -458,6 +499,13 @@ namespace DOTRModder
                 0x28, 0x36, 0x40, 0x72,
                 sideByte, 0x00, 0x16, 0x24, 
                 0x92, 0x0f, 0x16, 0xa2 }, 36, hproc);
+
+            //Patching duel act to not compare what side the player is and not who went first
+            
+            Mem.PatchEx(0x201d7a08, new byte[4] { 0x00,0xff,0x23,0x92 }, 4, hproc);
+        
+
+
         }
 
         static void AllowNonMonsterFusions()
@@ -618,7 +666,7 @@ namespace DOTRModder
         {
             
             //Patch Jump to 0036009c
-            Mem.PatchEx(0x20276300, new byte[8] { 0x40, 0x80, 0x0d, 0x08, 0x00, 0x00, 0x00, 0x00 }, 8, hproc);
+            Mem.PatchEx(improveAIInputOrig, new byte[8] { 0x40, 0x80, 0x0d, 0x08, 0x00, 0x00, 0x00, 0x00 }, 8, hproc);
             //Patch logic at jmp location
             Mem.PatchEx(improveAIInputDest, new byte[156] { 0x02, 0x00, 0x03, 0x92, 0x06, 0x00, 0x0b, 0x24, 0x21, 0x00, 0x6b, 0x14, 0x00, 0x00, 0x00, 0x00, 0xff, 0x00, 0x4c, 0x30, 0x04, 0x00, 0x0d, 0x96, 0xff, 0x00, 0xb8, 0x31, 0x23, 0x70, 0x98, 0x01, 0x1b, 0x00, 0xc0, 0x15, 0x00, 0x00, 0x00, 0x00, 0x03, 0x62, 0x02, 0x00, 0x03, 0xc2, 0x0d, 0x00, 0x22, 0x70, 0x98, 0x01, 0x16, 0x00, 0xc0, 0x15, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0c, 0x00, 0x0d, 0x8e, 0x01, 0x00, 0x09, 0x24, 0x0f, 0x00, 0xa9, 0x11, 0x02, 0x00, 0x09, 0x24, 0x10, 0x00, 0x0d, 0x92, 0x0c, 0x00, 0xa9, 0x15, 0x00, 0x00, 0x00, 0x00, 0x50, 0x7d, 0x07, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x57, 0x00, 0x4d, 0x80, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0xad, 0x35, 0x57, 0x00, 0x4d, 0xa0, 0x60, 0x01, 0x28, 0x26, 0x20, 0x00, 0x09, 0x24, 0x00, 0x00, 0x09, 0xa5, 0xc1, 0xda, 0x09, 0x08, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0x8a, 0x32, 0xff, 0x00, 0x83, 0x32, 0xc2, 0xd8, 0x09, 0x08 }, 156, hproc);
         }

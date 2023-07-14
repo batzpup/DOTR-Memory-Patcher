@@ -74,6 +74,7 @@ namespace DOTRModder
             LlblBlayr = new LinkLabel();
             lblFusions = new Label();
             btnSaveFusion = new Button();
+            label2 = new Label();
             dgvFusions = new DataGridView();
             Index = new DataGridViewTextBoxColumn();
             LCNumber = new DataGridViewTextBoxColumn();
@@ -118,7 +119,7 @@ namespace DOTRModder
             lblMapSideRed = new Label();
             lblMapName = new Label();
             RefreshEditor = new System.Windows.Forms.Timer(components);
-            label2 = new Label();
+            cb_KeepReincarnatedCard = new CheckBox();
             tbMain = new TabPage();
             tbMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)num_LpCap).BeginInit();
@@ -165,6 +166,7 @@ namespace DOTRModder
             // 
             tbMain.BackColor = Color.LightGray;
             tbMain.BackgroundImageLayout = ImageLayout.Stretch;
+            tbMain.Controls.Add(cb_KeepReincarnatedCard);
             tbMain.Controls.Add(cbCustomMaps);
             tbMain.Controls.Add(cb_fastIntro);
             tbMain.Controls.Add(btn_DefaultSettings);
@@ -632,6 +634,16 @@ namespace DOTRModder
             btnSaveFusion.TabIndex = 0;
             btnSaveFusion.Text = "Save";
             btnSaveFusion.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI", 36F, FontStyle.Regular, GraphicsUnit.Point);
+            label2.Location = new Point(385, 266);
+            label2.Name = "label2";
+            label2.Size = new Size(141, 81);
+            label2.TabIndex = 6;
+            label2.Text = "WIP";
             // 
             // dgvFusions
             // 
@@ -1140,15 +1152,16 @@ namespace DOTRModder
             // 
             RefreshEditor.Tick += RefreshEditor_Tick;
             // 
-            // label2
+            // cb_KeepReincarnatedCard
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI", 36F, FontStyle.Regular, GraphicsUnit.Point);
-            label2.Location = new Point(385, 266);
-            label2.Name = "label2";
-            label2.Size = new Size(141, 81);
-            label2.TabIndex = 6;
-            label2.Text = "WIP";
+            cb_KeepReincarnatedCard.AutoSize = true;
+            cb_KeepReincarnatedCard.Location = new Point(31, 431);
+            cb_KeepReincarnatedCard.Name = "cb_KeepReincarnatedCard";
+            cb_KeepReincarnatedCard.Size = new Size(191, 24);
+            cb_KeepReincarnatedCard.TabIndex = 73;
+            cb_KeepReincarnatedCard.Text = "Keep Reincarnated Card";
+            cb_KeepReincarnatedCard.UseVisualStyleBackColor = true;
+            cb_KeepReincarnatedCard.CheckedChanged += cb_KeepReincarnatedCard_CheckedChanged;
             // 
             // Form1
             // 
@@ -1336,5 +1349,6 @@ namespace DOTRModder
         private LinkLabel LlblBlayr;
         private Label lblFusions;
         private Label label2;
+        private CheckBox cb_KeepReincarnatedCard;
     }
 }

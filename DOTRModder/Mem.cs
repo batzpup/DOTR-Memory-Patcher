@@ -148,6 +148,32 @@ namespace DOTRModder
             //MessageBox.Show($"Patching 0x{dstAddr.ToString("X")} with {byteString} in 0x{hProcess.ToString("X")}");
             */
         }
+        public static void ShiftBytes(IntPtr srcAddress,IntPtr dstAddress,uint size,IntPtr hProcess)
+        {
+            uint oldProtectionRightSrc;
+            uint oldProtectionRightDst;
+            int distance = (int)(dstAddress - srcAddress);
+            if(distance == 0)
+            {
+                return;
+            }
+            VirtualProtectEx(hProcess,srcAddress, size, FlNewProtect.PAGE_EXECUTE_READWRITE,out oldProtectionRightSrc);
+            VirtualProtectEx(hProcess,dstAddress, size, FlNewProtect.PAGE_EXECUTE_READWRITE,out oldProtectionRightDst);
+            byte[] originalBytes = new byte[size];
+            ReadProcessMemory(hProcess, srcAddress, originalBytes, (int)size,out _);
+            if(distance > 0)
+            {
+                NopMips(srcAddress, (uint)distance / 4, hProcess);
+            }
+            else
+            {
+                NopMips(srcAddress + (nint)size + distance, (uint)distance / 4, hProcess);
+            }
+            
+            WriteProcessMemory(hProcess,dstAddress,originalBytes, (int)size,out _);
+           
+
+        }
 
         [DllImport("msvcrt.dll", EntryPoint = "memset", CallingConvention = CallingConvention.Cdecl, SetLastError = false)]
         public static extern IntPtr MemSet(IntPtr dest, int c, int byteCount);

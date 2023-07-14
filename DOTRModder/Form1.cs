@@ -1,6 +1,7 @@
 using DOTRModder.MapRelated;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -12,7 +13,8 @@ using System.Threading;
 using System.Windows.Forms;
 using static DOTRModder.Form1;
 using static System.Windows.Forms.DataFormats;
-
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
+using CheckBox = System.Windows.Forms.CheckBox;
 
 namespace DOTRModder
 {
@@ -30,30 +32,14 @@ namespace DOTRModder
         public static event Action<int[], int[]> SaveSlots;
         public static int[] SpecialThreeInARows = Enumerable.Repeat(671, 30).ToArray();
         public static int[] SpecialSlotRewards = Enumerable.Repeat(0, 30).ToArray();
-        public static SavedData savedData = new SavedData { };
+        public static SavedData savedData = new SavedData {Checkboxes = new Dictionary<string, bool>(), Values = new Dictionary<string, int>() };
         public static bool hasSaved = false;
 
         public static string SaveFilePath = "DOTRModderConfig.json";
         public struct SavedData
         {
-            public bool AIPassCheck;
-            public bool NegExpCheck;
-            public bool SlotRngCheck;
-            public bool ZoomCheck;
-            public bool AllFusionsCheck;
-            public bool MakoThemeCheck;
-            public bool CustomDuelsCheck;
-            public bool SlotRewardsCheck;
-            public bool SideFirstCheck;
-            public bool ForceSideStartCheck;
-            public bool LpCapCheck;
-            public bool ReincarnationCheck;
-            public bool TerrainCheck;
-            public int SideFirstValue;
-            public int ForceSideStartValue;
-            public int LpCapValue;
-            public int ReincarnationValue;
-            public int TerrainValue;
+            public Dictionary<string,bool> Checkboxes;
+            public Dictionary<string,int> Values;
             public int[] SlotThreeInARow;
             public int[] SlotRewards;
             public string LastSaveFilePath;
@@ -125,8 +111,7 @@ namespace DOTRModder
 
                     string json = File.ReadAllText(filePath);
                     savedData = JsonConvert.DeserializeObject<SavedData>(json);
-                    LoadBoolData();
-                    LoadValues();
+                    LoadGenericData();
                     LoadSlotsData();
 
                 }
@@ -147,9 +132,8 @@ namespace DOTRModder
 
                 if (saveFileDialog1.FileName != "")
                 {
-                    SaveBoolData();
+                    SaveGenericData();
                     SaveSlotsData();
-                    SaveValues();
                     SaveFilePath = saveFileDialog1.FileName;
                     savedData.LastSaveFilePath = SaveFilePath;
                     string json = JsonConvert.SerializeObject(savedData);
@@ -162,9 +146,8 @@ namespace DOTRModder
             {
                 if (!hasSaved)
                 {
-                    SaveBoolData();
+                    SaveGenericData();
                     SaveSlotsData();
-                    SaveValues();
                     string json = JsonConvert.SerializeObject(savedData);
                     File.WriteAllText(SaveFilePath, json);
                 }
@@ -173,32 +156,47 @@ namespace DOTRModder
 
         }
 
-        void SaveBoolData()
-        {
-            savedData.AIPassCheck = cb_AIPassFix.Checked;
-            savedData.NegExpCheck = cb_RemoveNegetiveExp.Checked;
-            savedData.SlotRngCheck = cb_RemoveSlotRng.Checked;
-            savedData.ZoomCheck = cb_ExpandedZoom.Checked;
-            savedData.AllFusionsCheck = cb_AllFusions.Checked;
-            savedData.MakoThemeCheck = cb_ChangeMakoBattleTheme.Checked;
-            savedData.CustomDuelsCheck = cb_AllowAllDuels.Checked;
-            savedData.SlotRewardsCheck = cb_AdditionalSlotRewards.Checked;
-            savedData.SideFirstCheck = cb_SideFirst.Checked;
-            savedData.ForceSideStartCheck = cb_ForceStartSide.Checked;
-            savedData.LpCapCheck = cb_LpCap.Checked;
-            savedData.ReincarnationCheck = cb_Reincarnation.Checked;
-            savedData.TerrainCheck = cb_Terrain.Checked;
-        }
 
-        void SaveValues()
+        void SaveGenericData()
         {
-            savedData.LpCapValue = Convert.ToInt32(num_LpCap.Value);
-            savedData.ReincarnationValue = Convert.ToInt32(num_Reincarnation.Value);
-            savedData.TerrainValue = Convert.ToInt32(num_Terrain.Value);
-            savedData.SideFirstValue = cbo_TeamFirstTurn.SelectedIndex;
-            savedData.ForceSideStartValue = cbo_ForceStartSide.SelectedIndex;
+            if (tcMaster.Controls[0] is TabPage page)
+            {
+                var controls = page.Controls;
+                foreach (var control in controls)
+                {
+                    if (control is CheckBox)
+                    {
+                        CheckBox checkBox = (CheckBox)control;
+                        if (!savedData.Checkboxes.TryAdd(checkBox.Name, checkBox.Checked))
+                        {
+                            savedData.Checkboxes[checkBox.Name] = checkBox.Checked;
+                        }
+                        
+                    }
+                    else if (control is NumericUpDown)
+                    {
+                        NumericUpDown numericUpDown = (NumericUpDown)control;
+                        if (!savedData.Values.TryAdd(numericUpDown.Name, Convert.ToInt32(numericUpDown.Value)))
+                        {
+                            savedData.Values[numericUpDown.Name] = Convert.ToInt32(numericUpDown.Value);
+                        }
+                       
+                    }
+                    else if (control is ComboBox)
+                    {
+                        ComboBox comboBox = (ComboBox)control;
+                        if(!savedData.Values.TryAdd(comboBox.Name, comboBox.SelectedIndex))
+                        {
+                            savedData.Values[comboBox.Name] = comboBox.SelectedIndex;
+                        }
+                       
+                    }
 
-        }
+                }
+            }
+            }
+
+  
         void SaveSlotsData()
         {
             BindSlotRewards();
@@ -222,32 +220,58 @@ namespace DOTRModder
             }
         }
 
-        void LoadValues()
+    
+        private void LoadGenericData()
         {
-            num_LpCap.Value = savedData.LpCapValue;
-            num_Reincarnation.Value = savedData.ReincarnationValue;
-            num_Terrain.Value = savedData.TerrainValue;
-            cbo_TeamFirstTurn.SelectedIndex = savedData.SideFirstValue;
-            cbo_ForceStartSide.SelectedIndex = savedData.ForceSideStartValue;
+            if (tcMaster.Controls[0] is TabPage page)
+            {
+                var controls = page.Controls;
+                foreach (var control in controls)
+                {
+                    if (control is CheckBox)
+                    {
+                        CheckBox checkBox = (CheckBox)control;
+                        if (savedData.Checkboxes.TryGetValue(checkBox.Name, out var value))
+                        {
+                            checkBox.Checked = value;
+                        }
 
-        }
+                    }
+                    else if (control is NumericUpDown)
+                    {
+                        NumericUpDown numericUpDown = (NumericUpDown)control;
+                        if (savedData.Values.TryGetValue(numericUpDown.Name, out var value))
+                        {
+                            numericUpDown.Value = value;
+                        }
+                    }
+                    else if (control is ComboBox)
+                    {
+                        ComboBox comboBox = (ComboBox)control;
+                        if (savedData.Values.TryGetValue(comboBox.Name, out var value))
+                        {
+                            comboBox.SelectedIndex = value;
+                        }
+                    }
 
-        private void LoadBoolData()
-        {
-            cb_AIPassFix.Checked = savedData.AIPassCheck;
-            cb_RemoveNegetiveExp.Checked = savedData.NegExpCheck;
-            cb_RemoveSlotRng.Checked = savedData.SlotRngCheck;
-            cb_ExpandedZoom.Checked = savedData.ZoomCheck;
-            cb_AllFusions.Checked = savedData.AllFusionsCheck;
-            cb_ChangeMakoBattleTheme.Checked = savedData.MakoThemeCheck;
-            cb_AllowAllDuels.Checked = savedData.CustomDuelsCheck;
-            cb_AdditionalSlotRewards.Checked = savedData.SlotRewardsCheck;
-            cb_SideFirst.Checked = savedData.SideFirstCheck;
-            cb_ForceStartSide.Checked = savedData.ForceSideStartCheck;
-            cb_LpCap.Checked = savedData.LpCapCheck;
-            cb_Reincarnation.Checked = savedData.ReincarnationCheck;
-            cb_Terrain.Checked = savedData.TerrainCheck;
-        }
+                }
+            }
+                /*
+                cb_AIPassFix.Checked = savedData.AIPassCheck;
+                cb_RemoveNegetiveExp.Checked = savedData.NegExpCheck;
+                cb_RemoveSlotRng.Checked = savedData.SlotRngCheck;
+                cb_ExpandedZoom.Checked = savedData.ZoomCheck;
+                cb_AllFusions.Checked = savedData.AllFusionsCheck;
+                cb_ChangeMakoBattleTheme.Checked = savedData.MakoThemeCheck;
+                cb_AllowAllDuels.Checked = savedData.CustomDuelsCheck;
+                cb_AdditionalSlotRewards.Checked = savedData.SlotRewardsCheck;
+                cb_SideFirst.Checked = savedData.SideFirstCheck;
+                cb_ForceStartSide.Checked = savedData.ForceSideStartCheck;
+                cb_LpCap.Checked = savedData.LpCapCheck;
+                cb_Reincarnation.Checked = savedData.ReincarnationCheck;
+                cb_Terrain.Checked = savedData.TerrainCheck;
+                */
+            }
 
         private Size oldSize;
         private void Form1_Load(object sender, EventArgs e)
@@ -861,6 +885,12 @@ namespace DOTRModder
         private void lblFusions_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void cb_KeepReincarnatedCard_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox box = sender as CheckBox;
+            UpdateSimpleBoolCheckbox.Invoke(SimpleModBools.KeepReincarnatedCard, box.Checked);
         }
     }
 
