@@ -432,6 +432,39 @@ namespace DOTRModder
 
         }
 
+
+        static void FixEmulatorCamera()
+        {
+            //Fix Battle Cam
+
+            //Removes Battle Cam Request
+            //Mem.NopMips(0x201D4B6C, 1, hproc);
+
+            //Fixes battle cam angle
+            Mem.PatchEx(0x201d9328, new byte[4] { 0x00, 0x38, 0x02, 0x24 }, 4, hproc);
+            //Fix Pitch
+            Mem.PatchEx(0x201d2b78, new byte[4] { 0x00, 0x38, 0x41, 0x28 }, 4, hproc);
+            //Mem.PatchEx(0x201d2a7c, new byte[4] { 0x00, 0x38, 0x02, 0x24 }, 4, hproc);
+            Mem.PatchEx(0x201d2b80, new byte[4] { 0x00, 0x38, 0x03, 0x24 },4, hproc);
+            InexperiencedSpyFix();
+        }
+        static void InexperiencedSpyFix()
+        {
+            Mem.PatchEx(0x20255ddc, new byte[4] { 0x00, 0x38, 0x03, 0x24 }, 4, hproc);
+            Mem.PatchEx(0x20255dfc, new byte[4] { 0x00, 0x38, 0x03, 0x24 }, 4, hproc);
+            
+        }
+        static void RemoveBattleZoom()
+        {
+            //Remove Camera Requests
+            Mem.NopMips(0x20274878, 1, hproc);
+            Mem.NopMips(0x202749c8, 1, hproc);
+            Mem.NopMips(0x202748d8, 1, hproc);
+            Mem.NopMips(0x20274974, 1, hproc);
+            //Remove Busy Flags
+            Mem.NopMips(0x20274ac0, 1, hproc);
+            Mem.NopMips(0x20274acc, 1, hproc);
+        }
         static void ForceNewGameStartTeam(int side)
         {
             Mem.PatchEx(LockTeamSelection2, new byte[4] { 0x01, 0x00, 0x05, 0x24 }, 4, hproc);
@@ -765,6 +798,7 @@ namespace DOTRModder
                     kvp.Value.Invoke();
                 }
             }
+            FixEmulatorCamera();
             
              Mem.ResumeProcess(pcsx2);
             
