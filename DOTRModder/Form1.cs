@@ -1,26 +1,19 @@
 using DOTRModder.MapRelated;
-using Microsoft.VisualBasic;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Net.Http.Json;
+using NAudio.Wave;
 using System.Reflection;
-using System.Security.Policy;
-using System.Text.Json.Serialization;
-using System.Threading;
-using System.Windows.Forms;
-using static DOTRModder.Form1;
-using static System.Windows.Forms.DataFormats;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
+
 using CheckBox = System.Windows.Forms.CheckBox;
+using System.Windows.Forms;
+using DOTRModder.Properties;
 
 namespace DOTRModder
 {
     public partial class Form1 : Form
     {
         Process process;
+
         public delegate void updateMainLabelDelegate(String labelString); // delegate type 
         public updateMainLabelDelegate updateMainlabel;
 
@@ -30,16 +23,23 @@ namespace DOTRModder
         public static event Action<SimpleModBools, bool> UpdateSimpleBoolCheckbox;
         public static event Action<ModBoolsIntPair, bool, int> UpdateBoolAndIntCheckbox;
         public static event Action<int[], int[]> SaveSlots;
+        public static event Action<int[], int[]> SaveMusic;
         public static int[] SpecialThreeInARows = Enumerable.Repeat(671, 30).ToArray();
         public static int[] SpecialSlotRewards = Enumerable.Repeat(0, 30).ToArray();
-        public static SavedData savedData = new SavedData {Checkboxes = new Dictionary<string, bool>(), Values = new Dictionary<string, int>() };
+        public static SavedData savedData = new SavedData { Checkboxes = new Dictionary<string, bool>(), Values = new Dictionary<string, int>() };
         public static bool hasSaved = false;
+        private WaveOutEvent waveOut;
+        private Mp3FileReader mp3Reader;
+        private bool isMusicPlaying = false;
+        private string CurrentSongSelected;
+        private int CurrentDuelistMusicSelected;
 
         public static string SaveFilePath = "DOTRModderConfig.json";
         public struct SavedData
         {
-            public Dictionary<string,bool> Checkboxes;
-            public Dictionary<string,int> Values;
+            public Dictionary<string, bool> Checkboxes;
+            public Dictionary<string, int> Values;
+            public Dictionary<int, string> DuelistMusic;
             public int[] SlotThreeInARow;
             public int[] SlotRewards;
             public string LastSaveFilePath;
@@ -51,6 +51,7 @@ namespace DOTRModder
         public string editMapISOPath = string.Empty;
         Terrain selectedTile = Terrain.NORMAL;
         private bool isClickAndDrag = false;
+        public Dictionary<int, string> DuelistMusic = new Dictionary<int, string>();
 
 
 
@@ -72,10 +73,18 @@ namespace DOTRModder
             UpdateStyles();
             LoadDefaultMaps();
             MakeFusionsSortable();
+            LoadDefaultMusic();
+            waveOut = new WaveOutEvent();
+            waveOut.Volume = 0.1f;
+            lbMusicNum.Enabled = false;
+
 
 
 
         }
+
+
+
         public void MakeFusionsSortable()
         {
             foreach (var item in dgvFusions.Columns)
@@ -113,6 +122,7 @@ namespace DOTRModder
                     savedData = JsonConvert.DeserializeObject<SavedData>(json);
                     LoadGenericData();
                     LoadSlotsData();
+                    LoadMusicData();
 
                 }
 
@@ -134,6 +144,7 @@ namespace DOTRModder
                 {
                     SaveGenericData();
                     SaveSlotsData();
+                    SaveMusicData();
                     SaveFilePath = saveFileDialog1.FileName;
                     savedData.LastSaveFilePath = SaveFilePath;
                     string json = JsonConvert.SerializeObject(savedData);
@@ -148,6 +159,7 @@ namespace DOTRModder
                 {
                     SaveGenericData();
                     SaveSlotsData();
+                    SaveMusicData();
                     string json = JsonConvert.SerializeObject(savedData);
                     File.WriteAllText(SaveFilePath, json);
                 }
@@ -156,6 +168,7 @@ namespace DOTRModder
 
         }
 
+      
 
         void SaveGenericData()
         {
@@ -171,7 +184,7 @@ namespace DOTRModder
                         {
                             savedData.Checkboxes[checkBox.Name] = checkBox.Checked;
                         }
-                        
+
                     }
                     else if (control is NumericUpDown)
                     {
@@ -180,31 +193,32 @@ namespace DOTRModder
                         {
                             savedData.Values[numericUpDown.Name] = Convert.ToInt32(numericUpDown.Value);
                         }
-                       
+
                     }
                     else if (control is ComboBox)
                     {
                         ComboBox comboBox = (ComboBox)control;
-                        if(!savedData.Values.TryAdd(comboBox.Name, comboBox.SelectedIndex))
+                        if (!savedData.Values.TryAdd(comboBox.Name, comboBox.SelectedIndex))
                         {
                             savedData.Values[comboBox.Name] = comboBox.SelectedIndex;
                         }
-                       
+
                     }
 
                 }
             }
-            }
+        }
 
-  
+
         void SaveSlotsData()
         {
             BindSlotRewards();
             savedData.SlotThreeInARow = SpecialThreeInARows;
             savedData.SlotRewards = SpecialSlotRewards;
-
-
-
+        }
+        private void SaveMusicData()
+        {
+            savedData.DuelistMusic = DuelistMusic;
         }
 
         void LoadSlotsData()
@@ -219,8 +233,12 @@ namespace DOTRModder
                 rewardCell.Value = rewardCell.Items[SpecialSlotRewards[i]];
             }
         }
+        void LoadMusicData()
+        {
+            DuelistMusic = savedData.DuelistMusic;
+        }
 
-    
+
         private void LoadGenericData()
         {
             if (tcMaster.Controls[0] is TabPage page)
@@ -256,22 +274,22 @@ namespace DOTRModder
 
                 }
             }
-                /*
-                cb_AIPassFix.Checked = savedData.AIPassCheck;
-                cb_RemoveNegetiveExp.Checked = savedData.NegExpCheck;
-                cb_RemoveSlotRng.Checked = savedData.SlotRngCheck;
-                cb_ExpandedZoom.Checked = savedData.ZoomCheck;
-                cb_AllFusions.Checked = savedData.AllFusionsCheck;
-                cb_ChangeMakoBattleTheme.Checked = savedData.MakoThemeCheck;
-                cb_AllowAllDuels.Checked = savedData.CustomDuelsCheck;
-                cb_AdditionalSlotRewards.Checked = savedData.SlotRewardsCheck;
-                cb_SideFirst.Checked = savedData.SideFirstCheck;
-                cb_ForceStartSide.Checked = savedData.ForceSideStartCheck;
-                cb_LpCap.Checked = savedData.LpCapCheck;
-                cb_Reincarnation.Checked = savedData.ReincarnationCheck;
-                cb_Terrain.Checked = savedData.TerrainCheck;
-                */
-            }
+            /*
+            cb_AIPassFix.Checked = savedData.AIPassCheck;
+            cb_RemoveNegetiveExp.Checked = savedData.NegExpCheck;
+            cb_RemoveSlotRng.Checked = savedData.SlotRngCheck;
+            cb_ExpandedZoom.Checked = savedData.ZoomCheck;
+            cb_AllFusions.Checked = savedData.AllFusionsCheck;
+            cb_ChangeMakoBattleTheme.Checked = savedData.MakoThemeCheck;
+            cb_AllowAllDuels.Checked = savedData.CustomDuelsCheck;
+            cb_AdditionalSlotRewards.Checked = savedData.SlotRewardsCheck;
+            cb_SideFirst.Checked = savedData.SideFirstCheck;
+            cb_ForceStartSide.Checked = savedData.ForceSideStartCheck;
+            cb_LpCap.Checked = savedData.LpCapCheck;
+            cb_Reincarnation.Checked = savedData.ReincarnationCheck;
+            cb_Terrain.Checked = savedData.TerrainCheck;
+            */
+        }
 
         private Size oldSize;
         private void Form1_Load(object sender, EventArgs e)
@@ -305,6 +323,7 @@ namespace DOTRModder
         private void btn_Start_Click(object sender, EventArgs e)
         {
             stopSelectionChanges();
+            stopMusic();
             CurrentStatus.Text = "Current Status:\nWaiting For Pcsx2";
 
             btn_Start.Enabled = false;
@@ -330,6 +349,7 @@ namespace DOTRModder
 
         }
 
+        
 
         private void cbCustomMaps_CheckedChanged(object sender, EventArgs e)
         {
@@ -376,7 +396,7 @@ namespace DOTRModder
         private void cb_ChangeMakoBattleTheme_CheckedChanged(object sender, EventArgs e)
         {
             CheckBox box = sender as CheckBox;
-            UpdateSimpleBoolCheckbox.Invoke(SimpleModBools.MakoTheme, box.Checked);
+            UpdateSimpleBoolCheckbox.Invoke(SimpleModBools.CustomMusic, box.Checked);
         }
 
         private void cb_AllowAllDuels_CheckedChanged(object sender, EventArgs e)
@@ -754,6 +774,15 @@ namespace DOTRModder
 
 
         }
+        private void LoadDefaultMusic()
+        {
+            for (int i = 0; i < 22; i++)
+            {
+                DuelistMusic.TryAdd(i, lbMusicNum.Items[MusicList.defaultSongs[i] - 1].ToString());
+            }
+            Debug.WriteLine(DuelistMusic.ToString());
+        }
+
         private void LoadDefaultMaps()
         {
             for (int i = 0; i < maps.Length; i++)
@@ -763,6 +792,7 @@ namespace DOTRModder
             currentMap = maps[0];
             lbMapSelection.SelectedIndex = 0;
         }
+
 
         private void LoadMapsFromIso()
         {
@@ -872,25 +902,124 @@ namespace DOTRModder
             dgvFusions.FirstDisplayedScrollingRowIndex = e.NewValue;
         }
 
-        private void dgvFusions_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
 
         private void LlblBlayr_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("explorer.exe", "https://github.com/Blayr/DOTR-Modding-Tool");
         }
 
-        private void lblFusions_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void cb_KeepReincarnatedCard_CheckedChanged(object sender, EventArgs e)
         {
             CheckBox box = sender as CheckBox;
             UpdateSimpleBoolCheckbox.Invoke(SimpleModBools.KeepReincarnatedCard, box.Checked);
+        }
+
+        private void stopMusic()
+        {
+            waveOut.Stop();
+            mp3Reader?.Dispose();
+            btnMusicPlay.Text = "Play";
+        }
+        private void btnMusicPlay_Click(object sender, EventArgs e)
+        {
+
+            if (CurrentSongSelected == null)
+            {
+                MessageBox.Show("No Music Currently Selected");
+                return;
+            }
+            if (!isMusicPlaying)
+            {
+                // Open the file dialog to select an MP3 file
+
+                // Load the selected MP3 file
+                byte[] mp3Data = Resources.ResourceManager.GetObject(CurrentSongSelected) as byte[];
+                if (mp3Data != null)
+                {
+
+                    MemoryStream stream = new MemoryStream(mp3Data);
+                    mp3Reader = new Mp3FileReader(stream);
+                    // Toggle the play state
+                    btnMusicPlay.Text = "Stop";
+                    // Update the button text
+                    // Play or stop the MP3 based on the current state
+                    waveOut.Init(mp3Reader);
+                    waveOut.Play();
+
+                }
+                else
+                {
+                    MessageBox.Show($"Track {CurrentSongSelected} not Found");
+                }
+
+
+            }
+            else
+            {
+                waveOut.Stop();
+                mp3Reader?.Dispose();
+                btnMusicPlay.Text = "Play";
+
+            }
+            isMusicPlaying = !isMusicPlaying;
+        }
+
+
+
+        private void tbMusicLevel_ValueChanged(object sender, EventArgs e)
+        {
+            float volume = tbMusicLevel.Value / 50f; // Convert to a value between 0 and 1
+            waveOut.Volume = volume;
+        }
+
+        private void lbMusicNum_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lbMusicNum.SelectedIndex != -1)
+            {
+                CurrentSongSelected = lbMusicNum.Items[lbMusicNum.SelectedIndex].ToString();
+                lblCurrentMusic.Text = CurrentSongSelected;
+                DuelistMusic[CurrentDuelistMusicSelected] = CurrentSongSelected;
+                UpdateSelectedMusic();
+            }
+        }
+
+        private void lbMusicDuelist_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!lbMusicNum.Enabled)
+            {
+                lbMusicNum.Enabled = true;
+            }
+            if (lbMusicDuelist.SelectedIndex != -1)
+            {
+                CurrentDuelistMusicSelected = lbMusicDuelist.SelectedIndex;
+                lblCurrentlyPlayingTitle.Text = lbMusicDuelist.Items[lbMusicDuelist.SelectedIndex].ToString() + "'s current music is:";
+                CurrentSongSelected = DuelistMusic[CurrentDuelistMusicSelected];
+                lblCurrentMusic.Text = CurrentSongSelected;
+                lbMusicNum.SelectedIndex = lbMusicNum.Items.IndexOf(CurrentSongSelected);
+                UpdateSelectedMusic();
+            }
+
+        }
+
+        private void UpdateSelectedMusic()
+        {
+            waveOut.Stop();
+            mp3Reader?.Dispose();
+            byte[] mp3Data = Resources.ResourceManager.GetObject(CurrentSongSelected) as byte[];
+            if (mp3Data != null)
+            {
+                isMusicPlaying = true;
+                MemoryStream stream = new MemoryStream(mp3Data);
+                mp3Reader = new Mp3FileReader(stream);
+                // Toggle the play state
+                btnMusicPlay.Text = "Stop";
+                // Update the button text
+                // Play or stop the MP3 based on the current state
+                waveOut.Init(mp3Reader);
+                waveOut.Play();
+
+            }
         }
     }
 

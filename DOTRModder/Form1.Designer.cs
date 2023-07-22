@@ -34,6 +34,7 @@ namespace DOTRModder
             components = new System.ComponentModel.Container();
             TabPage tbMain;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            cb_KeepReincarnatedCard = new CheckBox();
             cbCustomMaps = new CheckBox();
             cb_fastIntro = new CheckBox();
             btn_DefaultSettings = new Button();
@@ -55,7 +56,7 @@ namespace DOTRModder
             num_Terrain = new NumericUpDown();
             cb_AllFusions = new CheckBox();
             cb_Terrain = new CheckBox();
-            cb_ChangeMakoBattleTheme = new CheckBox();
+            cb_UseCustomMusic = new CheckBox();
             num_Reincarnation = new NumericUpDown();
             cb_AIPassFix = new CheckBox();
             cb_Reincarnation = new CheckBox();
@@ -118,8 +119,21 @@ namespace DOTRModder
             lblMapSideWhite = new Label();
             lblMapSideRed = new Label();
             lblMapName = new Label();
+            tbMusic = new TabPage();
+            scMusic = new SplitContainer();
+            lbMusicDuelist = new ListBox();
+            splitContainer2 = new SplitContainer();
+            lbMusicNum = new ListBox();
+            splitContainer3 = new SplitContainer();
+            btnMusicPlay = new Button();
+            lblCurrentMusic = new Label();
+            lblCurrentlyPlayingTitle = new Label();
+            lbVolume = new Label();
+            tbMusicLevel = new TrackBar();
+            lbMusicSelection = new ListBox();
             RefreshEditor = new System.Windows.Forms.Timer(components);
-            cb_KeepReincarnatedCard = new CheckBox();
+            splitContainer1 = new SplitContainer();
+            listBox1 = new ListBox();
             tbMain = new TabPage();
             tbMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)num_LpCap).BeginInit();
@@ -160,6 +174,23 @@ namespace DOTRModder
             ((System.ComponentModel.ISupportInitialize)pbForest).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbMeadow).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pbWasteland).BeginInit();
+            tbMusic.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)scMusic).BeginInit();
+            scMusic.Panel1.SuspendLayout();
+            scMusic.Panel2.SuspendLayout();
+            scMusic.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
+            splitContainer2.Panel1.SuspendLayout();
+            splitContainer2.Panel2.SuspendLayout();
+            splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer3).BeginInit();
+            splitContainer3.Panel1.SuspendLayout();
+            splitContainer3.Panel2.SuspendLayout();
+            splitContainer3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)tbMusicLevel).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.SuspendLayout();
             SuspendLayout();
             // 
             // tbMain
@@ -188,7 +219,7 @@ namespace DOTRModder
             tbMain.Controls.Add(num_Terrain);
             tbMain.Controls.Add(cb_AllFusions);
             tbMain.Controls.Add(cb_Terrain);
-            tbMain.Controls.Add(cb_ChangeMakoBattleTheme);
+            tbMain.Controls.Add(cb_UseCustomMusic);
             tbMain.Controls.Add(num_Reincarnation);
             tbMain.Controls.Add(cb_AIPassFix);
             tbMain.Controls.Add(cb_Reincarnation);
@@ -200,6 +231,17 @@ namespace DOTRModder
             tbMain.Size = new Size(1008, 670);
             tbMain.TabIndex = 0;
             tbMain.Text = "Main";
+            // 
+            // cb_KeepReincarnatedCard
+            // 
+            cb_KeepReincarnatedCard.AutoSize = true;
+            cb_KeepReincarnatedCard.Location = new Point(31, 431);
+            cb_KeepReincarnatedCard.Name = "cb_KeepReincarnatedCard";
+            cb_KeepReincarnatedCard.Size = new Size(191, 24);
+            cb_KeepReincarnatedCard.TabIndex = 73;
+            cb_KeepReincarnatedCard.Text = "Keep Reincarnated Card";
+            cb_KeepReincarnatedCard.UseVisualStyleBackColor = true;
+            cb_KeepReincarnatedCard.CheckedChanged += cb_KeepReincarnatedCard_CheckedChanged;
             // 
             // cbCustomMaps
             // 
@@ -429,16 +471,16 @@ namespace DOTRModder
             cb_Terrain.UseVisualStyleBackColor = true;
             cb_Terrain.CheckedChanged += cbTerrain_CheckedChanged;
             // 
-            // cb_ChangeMakoBattleTheme
+            // cb_UseCustomMusic
             // 
-            cb_ChangeMakoBattleTheme.AutoSize = true;
-            cb_ChangeMakoBattleTheme.Location = new Point(31, 308);
-            cb_ChangeMakoBattleTheme.Name = "cb_ChangeMakoBattleTheme";
-            cb_ChangeMakoBattleTheme.Size = new Size(214, 24);
-            cb_ChangeMakoBattleTheme.TabIndex = 55;
-            cb_ChangeMakoBattleTheme.Text = "Change Mako Battle Theme";
-            cb_ChangeMakoBattleTheme.UseVisualStyleBackColor = true;
-            cb_ChangeMakoBattleTheme.CheckedChanged += cb_ChangeMakoBattleTheme_CheckedChanged;
+            cb_UseCustomMusic.AutoSize = true;
+            cb_UseCustomMusic.Location = new Point(31, 308);
+            cb_UseCustomMusic.Name = "cb_UseCustomMusic";
+            cb_UseCustomMusic.Size = new Size(151, 24);
+            cb_UseCustomMusic.TabIndex = 55;
+            cb_UseCustomMusic.Text = "Use Custom Music";
+            cb_UseCustomMusic.UseVisualStyleBackColor = true;
+            cb_UseCustomMusic.CheckedChanged += cb_ChangeMakoBattleTheme_CheckedChanged;
             // 
             // num_Reincarnation
             // 
@@ -559,6 +601,7 @@ namespace DOTRModder
             tcMaster.Controls.Add(tbFusions);
             tcMaster.Controls.Add(tabSlotRewards);
             tcMaster.Controls.Add(tbEditMap);
+            tcMaster.Controls.Add(tbMusic);
             tcMaster.Dock = DockStyle.Fill;
             tcMaster.Location = new Point(0, 30);
             tcMaster.Name = "tcMaster";
@@ -664,7 +707,6 @@ namespace DOTRModder
             dgvFusions.RowTemplate.Height = 29;
             dgvFusions.Size = new Size(1002, 620);
             dgvFusions.TabIndex = 0;
-            dgvFusions.CellContentClick += dgvFusions_CellContentClick;
             // 
             // Index
             // 
@@ -1148,20 +1190,182 @@ namespace DOTRModder
             lblMapName.Text = "Map: ";
             lblMapName.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // tbMusic
+            // 
+            tbMusic.Controls.Add(scMusic);
+            tbMusic.Location = new Point(4, 32);
+            tbMusic.Name = "tbMusic";
+            tbMusic.Padding = new Padding(3);
+            tbMusic.Size = new Size(1008, 670);
+            tbMusic.TabIndex = 4;
+            tbMusic.Text = "Music Editor";
+            tbMusic.UseVisualStyleBackColor = true;
+            // 
+            // scMusic
+            // 
+            scMusic.Dock = DockStyle.Fill;
+            scMusic.Location = new Point(3, 3);
+            scMusic.Name = "scMusic";
+            // 
+            // scMusic.Panel1
+            // 
+            scMusic.Panel1.Controls.Add(lbMusicDuelist);
+            // 
+            // scMusic.Panel2
+            // 
+            scMusic.Panel2.Controls.Add(splitContainer2);
+            scMusic.Size = new Size(1002, 664);
+            scMusic.SplitterDistance = 477;
+            scMusic.TabIndex = 0;
+            // 
+            // lbMusicDuelist
+            // 
+            lbMusicDuelist.Dock = DockStyle.Fill;
+            lbMusicDuelist.FormattingEnabled = true;
+            lbMusicDuelist.ItemHeight = 20;
+            lbMusicDuelist.Items.AddRange(new object[] { "Tutorial", "Seto", "Weevil", "Rex", "Keith", "Ishtar", "Necromancer", "Darkness-ruler", "Labyrinth-ruler", "Pegasus", "Richard", "Tea", "Tristan", "Mai", "Mako", "Joey", "Shadi", "Jasper", "Bakura", "Yugi", "MFL Skull Knight", "MFL Chakra" });
+            lbMusicDuelist.Location = new Point(0, 0);
+            lbMusicDuelist.Name = "lbMusicDuelist";
+            lbMusicDuelist.Size = new Size(477, 664);
+            lbMusicDuelist.TabIndex = 1;
+            lbMusicDuelist.SelectedIndexChanged += lbMusicDuelist_SelectedIndexChanged;
+            // 
+            // splitContainer2
+            // 
+            splitContainer2.Dock = DockStyle.Fill;
+            splitContainer2.Location = new Point(0, 0);
+            splitContainer2.Name = "splitContainer2";
+            // 
+            // splitContainer2.Panel1
+            // 
+            splitContainer2.Panel1.Controls.Add(lbMusicNum);
+            // 
+            // splitContainer2.Panel2
+            // 
+            splitContainer2.Panel2.Controls.Add(splitContainer3);
+            splitContainer2.Size = new Size(521, 664);
+            splitContainer2.SplitterDistance = 257;
+            splitContainer2.TabIndex = 0;
+            // 
+            // lbMusicNum
+            // 
+            lbMusicNum.Dock = DockStyle.Fill;
+            lbMusicNum.FormattingEnabled = true;
+            lbMusicNum.ItemHeight = 20;
+            lbMusicNum.Items.AddRange(new object[] { "01OpeningCutscene", "02MainMenu", "03CustomDuel", "04MapMusic", "05DeckCreation", "06Special", "07TutorialDuel", "08BattleMusicRed", "09BattleMusicWhite", "10Seto", "11Yugi", "12MFLWhite", "13NormalBattle", "14MeadowBattle", "15MountainBattle", "16SeaBattle", "17ForestBattle", "18WastelandBattle", "19CrushBattle", "20DarkBattle", "21ToonBattle", "22LabBattle", "23Victory", "24NewGame", "25SimonSummoning", "26SetosArrival", "27TalkWithYugi", "28YugiArrivesAtDover", "29PegasusBetrayal", "30DefeatRichardCutscene", "31SetoSummoningRitual1", "32SetoSummongRitual2", "33SummonMFLS", "34FindSetosBook", "35MakoTheme", "36SummonMFLC", "37SetoHandsYouBadge", "38EndGameYorkist", "39Fill(NOT MUSIC)", "40CustomDuel", "41Trade", "42Defeat", "43Exodia", "44MFLRed" });
+            lbMusicNum.Location = new Point(0, 0);
+            lbMusicNum.Name = "lbMusicNum";
+            lbMusicNum.Size = new Size(257, 664);
+            lbMusicNum.TabIndex = 2;
+            lbMusicNum.SelectedIndexChanged += lbMusicNum_SelectedIndexChanged;
+            // 
+            // splitContainer3
+            // 
+            splitContainer3.Dock = DockStyle.Fill;
+            splitContainer3.Location = new Point(0, 0);
+            splitContainer3.Name = "splitContainer3";
+            splitContainer3.Orientation = Orientation.Horizontal;
+            // 
+            // splitContainer3.Panel1
+            // 
+            splitContainer3.Panel1.Controls.Add(btnMusicPlay);
+            // 
+            // splitContainer3.Panel2
+            // 
+            splitContainer3.Panel2.Controls.Add(lblCurrentMusic);
+            splitContainer3.Panel2.Controls.Add(lblCurrentlyPlayingTitle);
+            splitContainer3.Panel2.Controls.Add(lbVolume);
+            splitContainer3.Panel2.Controls.Add(tbMusicLevel);
+            splitContainer3.Size = new Size(260, 664);
+            splitContainer3.SplitterDistance = 246;
+            splitContainer3.TabIndex = 0;
+            // 
+            // btnMusicPlay
+            // 
+            btnMusicPlay.Dock = DockStyle.Fill;
+            btnMusicPlay.Location = new Point(0, 0);
+            btnMusicPlay.Name = "btnMusicPlay";
+            btnMusicPlay.Size = new Size(260, 246);
+            btnMusicPlay.TabIndex = 1;
+            btnMusicPlay.Text = "Play";
+            btnMusicPlay.UseVisualStyleBackColor = true;
+            btnMusicPlay.Click += btnMusicPlay_Click;
+            // 
+            // lblCurrentMusic
+            // 
+            lblCurrentMusic.AutoEllipsis = true;
+            lblCurrentMusic.Location = new Point(2, 30);
+            lblCurrentMusic.Name = "lblCurrentMusic";
+            lblCurrentMusic.Size = new Size(260, 77);
+            lblCurrentMusic.TabIndex = 3;
+            lblCurrentMusic.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblCurrentlyPlayingTitle
+            // 
+            lblCurrentlyPlayingTitle.AutoSize = true;
+            lblCurrentlyPlayingTitle.Location = new Point(14, 10);
+            lblCurrentlyPlayingTitle.Name = "lblCurrentlyPlayingTitle";
+            lblCurrentlyPlayingTitle.Size = new Size(0, 20);
+            lblCurrentlyPlayingTitle.TabIndex = 2;
+            // 
+            // lbVolume
+            // 
+            lbVolume.AutoSize = true;
+            lbVolume.Location = new Point(100, 335);
+            lbVolume.Name = "lbVolume";
+            lbVolume.Size = new Size(59, 20);
+            lbVolume.TabIndex = 1;
+            lbVolume.Text = "Volume";
+            // 
+            // tbMusicLevel
+            // 
+            tbMusicLevel.Dock = DockStyle.Bottom;
+            tbMusicLevel.Location = new Point(0, 358);
+            tbMusicLevel.Name = "tbMusicLevel";
+            tbMusicLevel.Size = new Size(260, 56);
+            tbMusicLevel.TabIndex = 0;
+            tbMusicLevel.Value = 5;
+            tbMusicLevel.ValueChanged += tbMusicLevel_ValueChanged;
+            // 
+            // lbMusicSelection
+            // 
+            lbMusicSelection.Dock = DockStyle.Fill;
+            lbMusicSelection.FormattingEnabled = true;
+            lbMusicSelection.ItemHeight = 20;
+            lbMusicSelection.Items.AddRange(new object[] { "Tutorial", "Seto", "Weevil", "Rex", "Keith", "Ishtar", "Necromancer", "Darkness-ruler", "Labyrinth-ruler", "Pegasus", "Richard", "Tea", "Tristan", "Mai", "Mako", "Joey", "Shadi", "Jasper", "Bakura", "Yugi", "Skull Knight", "Chakra", "Default Map 00", "Default Map 01", "Default Map 02", "Default Map 03", "Default Map 04", "Default Map 05", "Default Map 06", "Default Map 07", "Default Map 08", "Default Map 09", "Default Map 10", "Default Map 11", "Default Map 12", "Default Map 13", "Default Map 14", "Default Map 15", "Default Map 16", "Default Map 17", "Default Map 18", "Default Map 19", "Default Map 20", "Default Map 21", "Default Map 22", "Default Map 23" });
+            lbMusicSelection.Location = new Point(0, 0);
+            lbMusicSelection.Name = "lbMusicSelection";
+            lbMusicSelection.Size = new Size(253, 664);
+            lbMusicSelection.TabIndex = 1;
+            // 
             // RefreshEditor
             // 
             RefreshEditor.Tick += RefreshEditor_Tick;
             // 
-            // cb_KeepReincarnatedCard
+            // splitContainer1
             // 
-            cb_KeepReincarnatedCard.AutoSize = true;
-            cb_KeepReincarnatedCard.Location = new Point(31, 431);
-            cb_KeepReincarnatedCard.Name = "cb_KeepReincarnatedCard";
-            cb_KeepReincarnatedCard.Size = new Size(191, 24);
-            cb_KeepReincarnatedCard.TabIndex = 73;
-            cb_KeepReincarnatedCard.Text = "Keep Reincarnated Card";
-            cb_KeepReincarnatedCard.UseVisualStyleBackColor = true;
-            cb_KeepReincarnatedCard.CheckedChanged += cb_KeepReincarnatedCard_CheckedChanged;
+            splitContainer1.Dock = DockStyle.Fill;
+            splitContainer1.Location = new Point(0, 0);
+            splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            splitContainer1.Panel1.Controls.Add(lbMusicSelection);
+            splitContainer1.Panel1.Controls.Add(listBox1);
+            splitContainer1.Size = new Size(521, 664);
+            splitContainer1.SplitterDistance = 253;
+            splitContainer1.TabIndex = 0;
+            // 
+            // listBox1
+            // 
+            listBox1.Dock = DockStyle.Fill;
+            listBox1.FormattingEnabled = true;
+            listBox1.ItemHeight = 20;
+            listBox1.Items.AddRange(new object[] { "" });
+            listBox1.Location = new Point(0, 0);
+            listBox1.Name = "listBox1";
+            listBox1.Size = new Size(253, 664);
+            listBox1.TabIndex = 2;
             // 
             // Form1
             // 
@@ -1222,6 +1426,24 @@ namespace DOTRModder
             ((System.ComponentModel.ISupportInitialize)pbForest).EndInit();
             ((System.ComponentModel.ISupportInitialize)pbMeadow).EndInit();
             ((System.ComponentModel.ISupportInitialize)pbWasteland).EndInit();
+            tbMusic.ResumeLayout(false);
+            scMusic.Panel1.ResumeLayout(false);
+            scMusic.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)scMusic).EndInit();
+            scMusic.ResumeLayout(false);
+            splitContainer2.Panel1.ResumeLayout(false);
+            splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer2).EndInit();
+            splitContainer2.ResumeLayout(false);
+            splitContainer3.Panel1.ResumeLayout(false);
+            splitContainer3.Panel2.ResumeLayout(false);
+            splitContainer3.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer3).EndInit();
+            splitContainer3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)tbMusicLevel).EndInit();
+            splitContainer1.Panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -1294,7 +1516,7 @@ namespace DOTRModder
         private NumericUpDown num_Terrain;
         private CheckBox cb_AllFusions;
         private CheckBox cb_Terrain;
-        private CheckBox cb_ChangeMakoBattleTheme;
+        private CheckBox cb_UseCustomMusic;
         private NumericUpDown num_Reincarnation;
         private CheckBox cb_AIPassFix;
         private CheckBox cb_Reincarnation;
@@ -1350,5 +1572,19 @@ namespace DOTRModder
         private Label lblFusions;
         private Label label2;
         private CheckBox cb_KeepReincarnatedCard;
+        private TabPage tbMusic;
+        private SplitContainer scMusic;
+        private ListBox lbMusicSelection;
+        private SplitContainer splitContainer1;
+        private ListBox listBox1;
+        private ListBox lbMusicDuelist;
+        private SplitContainer splitContainer2;
+        private SplitContainer splitContainer3;
+        private Button btnMusicPlay;
+        private TrackBar tbMusicLevel;
+        private Label lbVolume;
+        private Label lblCurrentMusic;
+        private Label lblCurrentlyPlayingTitle;
+        private ListBox lbMusicNum;
     }
 }
