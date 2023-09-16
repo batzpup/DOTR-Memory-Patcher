@@ -1,3 +1,7 @@
+# UPDATE
+ Currently working on integrating updating Blayrs modding tool, as the main tool for these mods, but they are patching iso's
+ still use these if you would like to memory patch instead otherwise go to [Blayrs Modding Tool](https://github.com/Blayr/DOTR-Modding-Tool)
+ and in the next public release will be all these mods as well.
 # DOTR-Memory-Patcher
  A memory patcher for the NTSC-U Version of Yu-gi-oh Yu-Gi-Oh! The Duelists of the Roses mods.  
 
